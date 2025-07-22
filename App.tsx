@@ -7,6 +7,8 @@ import Footer from './src/components/layout/Footer/Footer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './src/screens/Home';
+import Market from './src/screens/Market';
+import Trip from './src/screens/Trip';
 
 
 const Stack = createNativeStackNavigator();
@@ -30,7 +32,8 @@ function App(): React.JSX.Element {
             <Sidebar />
             <Stack.Navigator screenOptions={{ headerShown: false , contentStyle: { backgroundColor: 'transparent' } }} >
               <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Market" component={require('./src/screens/Market').default} />
+              <Stack.Screen name="Market" component={Market} />
+              <Stack.Screen name='Trips' component={Trip} />
               
 
               

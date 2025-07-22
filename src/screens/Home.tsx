@@ -16,9 +16,9 @@ import AppsList from '../components/AppList/AppsList';
 import { useNavigation } from '@react-navigation/native';
 
 const cardsData = [
-  { title: 'Market', image: require('../assets/images/menu/food.jpg') },
+  {  title: 'Market', image: require('../assets/images/menu/food.jpg') },
   { title: 'Transport', image: require('../assets/images/menu/car.jpg') },
-  { title: 'Excursion', image: require('../assets/images/menu/travel.jpg') },
+  { title: 'Trips', image: require('../assets/images/menu/travel.jpg') },
   { title: 'Shopping', image: 'https://source.unsplash.com/400x300/?shopping' },
   { title: 'Entertainment', image: 'https://source.unsplash.com/400x300/?entertainment' },
   { title: 'Health', image: 'https://source.unsplash.com/400x300/?health' },

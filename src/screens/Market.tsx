@@ -4,12 +4,11 @@ import {
   Text,
   View,
   FlatList,
-  Image,
-  Pressable,
   ScrollView,
 } from 'react-native';
-
-import { categories, products } from '../data/products'; // assume tu exportes les arrays depuis un fichier `data.ts`
+import { categories, products } from '../data/products';
+import CategoryCard from '../components/CategoryCard/CategoryCard';
+import ProductCard from '../components/ProductCard/ProductCard';
 
 const Market = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
@@ -37,23 +36,11 @@ const Market = () => {
           keyExtractor={(item) => item}
           contentContainerStyle={styles.categoriesList}
           renderItem={({ item }) => (
-            <Pressable
+            <CategoryCard
+              item={item}
+              isSelected={selectedCategory === item}
               onPress={() => setSelectedCategory(item)}
-              style={({ focused }) => [
-                styles.categoryItem,
-                focused && styles.focused,
-                selectedCategory === item && styles.selected,
-              ]}
-              hasTVPreferredFocus={selectedCategory === item}
-            >
-              <Image
-                source={{
-                  uri: 'https://cdn-icons-png.flaticon.com/512/3081/3081559.png',
-                }}
-                style={styles.categoryImage}
-              />
-              <Text style={styles.categoryLabel}>{item}</Text>
-            </Pressable>
+            />
           )}
         />
 
@@ -64,13 +51,7 @@ const Market = () => {
           keyExtractor={(item) => item.id.toString()}
           horizontal
           contentContainerStyle={styles.productsList}
-          renderItem={({ item }) => (
-            <View style={styles.productCard}>
-              <Image source={{ uri: item.image }} style={styles.productImage} />
-              <Text style={styles.productTitle}>{item.title}</Text>
-              <Text style={styles.productPrice}>{item.price} MAD</Text>
-            </View>
-          )}
+          renderItem={({ item }) => <ProductCard item={item} />}
         />
       </ScrollView>
     </View>
@@ -78,7 +59,6 @@ const Market = () => {
 };
 
 export default Market;
-
 
 const styles = StyleSheet.create({
   container: {
@@ -108,56 +88,7 @@ const styles = StyleSheet.create({
   categoriesList: {
     paddingBottom: 20,
   },
-  categoryItem: {
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  focused: {
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 10,
-  },
-  selected: {
-    borderWidth: 2,
-    borderColor: '#00bcd4',
-    borderRadius: 10,
-  },
-  categoryImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: '#888',
-    marginBottom: 5,
-  },
-  categoryLabel: {
-    color: '#fff',
-    fontSize: 12,
-    textAlign: 'center',
-  },
   productsList: {
     paddingVertical: 20,
-  },
-  productCard: {
-    backgroundColor: '#222',
-    padding: 10,
-    borderRadius: 10,
-    marginRight: 20,
-    width: 120,
-    alignItems: 'center',
-  },
-  productImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginBottom: 5,
-  },
-  productTitle: {
-    color: '#fff',
-    fontSize: 14,
-  },
-  productPrice: {
-    color: '#ccc',
-    fontSize: 12,
   },
 });
