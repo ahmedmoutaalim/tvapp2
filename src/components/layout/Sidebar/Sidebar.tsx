@@ -1,19 +1,41 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState, useRef } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 
-const icons = [
-  'search',
-  'home',
-  'grid',
-  'play',
-  'heart',
-  'user',
+
+
+const menu = [
+  {
+    title: 'Search',
+    icon: 'search',
+  },
+  {
+    title: 'Home',
+    icon: 'home',
+  },
+  {
+    title: 'Grid',
+    icon: 'grid',
+  },
+  {
+    title: 'Play',
+    icon: 'play',
+  },
+  {
+    title: 'Favorites',
+    icon: 'heart',
+  },
+  {
+    title: 'User',
+    icon: 'user',
+  },
 ];
 
 const Sidebar = () => {
+  const navigation = useNavigation();
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
-  const animations = useRef(icons.map(() => new Animated.Value(1))).current;
+  const animations = useRef(menu.map(() => new Animated.Value(1))).current;
 
   const handleFocus = (index: number) => {
     setFocusedIndex(index);
@@ -50,9 +72,9 @@ const Sidebar = () => {
 
   return (
     <View style={styles.container}>
-      {icons.map((iconName, index) => (
+      {menu.map((item, index) => (
         <TouchableOpacity
-          key={iconName}
+          key={item.icon}
           style={[
             styles.iconContainer,
             focusedIndex === index && styles.focusedIcon,
@@ -60,11 +82,15 @@ const Sidebar = () => {
           activeOpacity={0.8}
           onFocus={() => handleFocus(index)}
           onBlur={() => handleBlur(index)}
-          onPress={() => handlePress(index)}
+          onPress={() => {handlePress(index) ; 
+navigation.navigate(item.title) 
+
+
+          } }
         >
           <Animated.View style={{ transform: [{ scale: animations[index] }] }}>
             <Icon
-              name={iconName}
+              name={item.icon}
               size={24}
               color="#fff"
             />

@@ -13,9 +13,10 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
 import AppsList from '../components/AppList/AppsList';
+import { useNavigation } from '@react-navigation/native';
 
 const cardsData = [
-  { title: 'Food', image: require('../assets/images/menu/food.jpg') },
+  { title: 'Market', image: require('../assets/images/menu/food.jpg') },
   { title: 'Transport', image: require('../assets/images/menu/car.jpg') },
   { title: 'Excursion', image: require('../assets/images/menu/travel.jpg') },
   { title: 'Shopping', image: 'https://source.unsplash.com/400x300/?shopping' },
@@ -30,6 +31,7 @@ const CARD_MARGIN = 16;
 const VISIBLE_CARDS = 3;
 
 const Home = () => {
+  const navigation = useNavigation();
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const scales = useRef(cardsData.map(() => new Animated.Value(1))).current;
@@ -84,6 +86,7 @@ const Home = () => {
           renderItem={({ item, index }) => (
             <TouchableOpacity
               activeOpacity={0.8}
+              onPress={() => navigation.navigate(item.title)}
               onFocus={() => setFocusedIndex(index)}
               onBlur={() => setFocusedIndex(null)}
               style={[styles.cardWrapper, focusedIndex === index && { zIndex: 10 }]}

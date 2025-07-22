@@ -20,7 +20,7 @@ function App(): React.JSX.Element {
         resizeMode="cover"
       >
         <LinearGradient
-          colors={['rgba(0, 0, 0, 0.9)', 'rgba(0,0,0,0.0)']}
+          colors={['rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.46)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradient}
@@ -28,8 +28,13 @@ function App(): React.JSX.Element {
           <Navbar />
           <View style={styles.content}>
             <Sidebar />
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Navigator screenOptions={{ headerShown: false , contentStyle: { backgroundColor: 'transparent' } }} >
               <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Market" component={require('./src/screens/Market').default} />
+              
+
+              
+            
             </Stack.Navigator>
           </View>
         </LinearGradient>
