@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './src/screens/Home';
 import Market from './src/screens/Market';
 import Trip from './src/screens/Trip';
+import Cart from './src/screens/Cart';
 
 
 const Stack = createNativeStackNavigator();
@@ -34,6 +35,7 @@ function App(): React.JSX.Element {
               <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="Market" component={Market} />
               <Stack.Screen name='Trips' component={Trip} />
+              <Stack.Screen name="Cart" component={Cart} />
               
 
               

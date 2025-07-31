@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import dayjs from 'dayjs';
+import CartIcon from '../../Cart/CartIcon';
 
 const Navbar = () => {
   const currentDate = dayjs().format('D MMMM, HH:mm');
@@ -16,9 +17,7 @@ const Navbar = () => {
         <TouchableOpacity style={styles.iconButton}>
           <Icon name="settings" size={22} color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="volume-2" size={22} color="#fff" />
-        </TouchableOpacity>
+       <CartIcon />
 
       
         <TouchableOpacity style={styles.langButton}>
