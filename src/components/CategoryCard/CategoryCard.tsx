@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, {useRef, useEffect, useState} from 'react'
 import {
   StyleSheet,
   Text,
@@ -7,29 +7,28 @@ import {
   View,
   findNodeHandle,
   Platform
-} from 'react-native';
+} from 'react-native'
 
 interface Props {
-  item: string;
-  autoFocus?: boolean; // 👈 جديد، باش نحدد واش هاد البطاقة خاصها تركز أولاً
-  onPress: () => void;
+  item: string
+  autoFocus?: boolean
+  onPress: () => void
 }
 
-const CategoryCard = ({ item, autoFocus, onPress }: Props) => {
-  const ref = useRef<any>(null);
-  const [isFocused, setIsFocused] = useState(false);
+const CategoryCard = ({item, autoFocus, onPress}: Props) => {
+  const ref = useRef<any>(null)
+  const [isFocused, setIsFocused] = useState(false)
 
   useEffect(() => {
     if (autoFocus && ref.current && Platform.isTV) {
-      // ⏱️ ندير focus بعد ما يدوز شوية الوقت باش يتأكد أنو ترندر
       setTimeout(() => {
-        const node = findNodeHandle(ref.current);
+        const node = findNodeHandle(ref.current)
         if (node) {
-          ref.current.focus();
+          ref.current.focus()
         }
-      }, 300);
+      }, 300)
     }
-  }, [autoFocus]);
+  }, [autoFocus])
 
   return (
     <Pressable
@@ -39,45 +38,37 @@ const CategoryCard = ({ item, autoFocus, onPress }: Props) => {
       onPress={onPress}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
-      style={[
-        styles.container,
-        
-      ]}
-    >
+      style={[styles.container]}>
       <Image
         source={require('../../assets/images/products/cat/cat1.jpg')}
-        style={
-            [
-                styles.image , isFocused && styles.focused,
-            ]
-        }
+        style={[styles.image, isFocused && styles.focused]}
       />
       <Text style={styles.label}>{item}</Text>
     </Pressable>
-  );
-};
+  )
+}
 
-export default CategoryCard;
+export default CategoryCard
 
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     marginRight: 20,
-    padding: 5,
+    padding: 5
   },
   image: {
     width: 150,
     height: 120,
     borderRadius: 116,
-    marginBottom: 5,
+    marginBottom: 5
   },
   label: {
     color: '#fff',
     fontSize: 15,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   focused: {
     borderWidth: 4,
-    borderColor: 'white',
-  },
-});
+    borderColor: 'white'
+  }
+})

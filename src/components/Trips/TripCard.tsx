@@ -1,4 +1,3 @@
-// TripCard.tsx
 import React from 'react'
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import Button from '../Button/Button'

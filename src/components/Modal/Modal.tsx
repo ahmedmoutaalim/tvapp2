@@ -25,20 +25,20 @@ const Modal = ({
     <RNModal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          {/* Close Icon */}
+         
           <Pressable onPress={onClose} style={styles.closeIcon}>
             <Ionicons name="close" size={20} color="#fff" />
           </Pressable>
 
-          {/* Title */}
+        
           <Text style={styles.title}>{title}</Text>
 
-          {/* Body */}
+         
           <View style={[styles.body, bodyStyle]}>
             {children}
           </View>
 
-          {/* Footer */}
+        
           {footer && (
             <View style={[styles.footer, footerStyle]}>
               {footer}

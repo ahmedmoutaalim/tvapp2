@@ -65,7 +65,7 @@ const Button = ({
         getButtonStyle(),
         style,
         disabled && styles.disabled,
-        isFocused && styles.focused // border white when focused
+        isFocused && styles.focused
       ]}
       disabled={disabled}
       activeOpacity={0.8}
