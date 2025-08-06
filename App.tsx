@@ -1,18 +1,18 @@
-import React from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import Navbar from './src/components/layout/Navbar/Navbar';
-import Sidebar from './src/components/layout/Sidebar/Sidebar';
-import Footer from './src/components/layout/Footer/Footer';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from './src/screens/Home';
-import Market from './src/screens/Market';
-import Trip from './src/screens/Trip';
-import Cart from './src/screens/Cart';
+import React from 'react'
+import {View, StyleSheet, ImageBackground} from 'react-native'
+import LinearGradient from 'react-native-linear-gradient'
+import Navbar from './src/components/layout/Navbar/Navbar'
+import Sidebar from './src/components/layout/Sidebar/Sidebar'
+import Footer from './src/components/layout/Footer/Footer'
+import {NavigationContainer} from '@react-navigation/native'
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import Home from './src/screens/Home'
+import Market from './src/screens/Market'
+import Trip from './src/screens/Trip'
+import Cart from './src/screens/Cart'
+import './i18n'
 
-
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator()
 
 function App(): React.JSX.Element {
   return (
@@ -20,46 +20,44 @@ function App(): React.JSX.Element {
       <ImageBackground
         source={require('./src/assets/images/bghotel.jpg')}
         style={styles.bg}
-        resizeMode="cover"
-      >
+        resizeMode="cover">
         <LinearGradient
           colors={['rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.46)']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradient}
-        >
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          style={styles.gradient}>
           <Navbar />
           <View style={styles.content}>
             <Sidebar />
-            <Stack.Navigator screenOptions={{ headerShown: false , contentStyle: { backgroundColor: 'transparent' } }} >
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+                contentStyle: {backgroundColor: 'transparent'}
+              }}>
               <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="Market" component={Market} />
-              <Stack.Screen name='Trips' component={Trip} />
+              <Stack.Screen name="Trips" component={Trip} />
               <Stack.Screen name="Cart" component={Cart} />
-              
-
-              
-            
             </Stack.Navigator>
           </View>
         </LinearGradient>
         <Footer />
       </ImageBackground>
     </NavigationContainer>
-  );
+  )
 }
 
-export default App;
+export default App
 
 const styles = StyleSheet.create({
   bg: {
-    flex: 1,
+    flex: 1
   },
   gradient: {
-    flex: 1,
+    flex: 1
   },
   content: {
     flex: 1,
-    flexDirection: 'row',
-  },
-});
+    flexDirection: 'row'
+  }
+})

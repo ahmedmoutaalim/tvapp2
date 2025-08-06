@@ -4,7 +4,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Image,
   Animated,
   FlatList,
   ScrollView,
@@ -14,19 +13,12 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
 import AppsList from '../components/AppList/AppsList'
 import {useNavigation} from '@react-navigation/native'
+import {useTranslation} from 'react-i18next'
 
 const cardsData = [
   {title: 'Market', image: require('../assets/images/menu/food.jpg')},
   {title: 'Transport', image: require('../assets/images/menu/car.jpg')},
-  {title: 'Trips', image: require('../assets/images/menu/travel.jpg')},
-  {title: 'Shopping', image: 'https://source.unsplash.com/400x300/?shopping'},
-  {
-    title: 'Entertainment',
-    image: 'https://source.unsplash.com/400x300/?entertainment'
-  },
-  {title: 'Health', image: 'https://source.unsplash.com/400x300/?health'},
-  {title: 'Culture', image: 'https://source.unsplash.com/400x300/?culture'},
-  {title: 'Sports', image: 'https://source.unsplash.com/400x300/?sports'}
+  {title: 'Excursions', image: require('../assets/images/menu/travel.jpg')}
 ]
 
 const CARD_WIDTH = 160
@@ -34,6 +26,7 @@ const CARD_MARGIN = 16
 const VISIBLE_CARDS = 3
 
 const CardItem = ({item, onPress}: {item: any; onPress: () => void}) => {
+  const {t} = useTranslation()
   const scaleAnim = useRef(new Animated.Value(1)).current
   const [isFocused, setIsFocused] = useState(false)
 
@@ -87,7 +80,9 @@ const CardItem = ({item, onPress}: {item: any; onPress: () => void}) => {
   )
 }
 const Home = () => {
+  const {t} = useTranslation()
   const navigation = useNavigation()
+  const userName = 'Tomas'
 
   return (
     <ScrollView
@@ -96,10 +91,13 @@ const Home = () => {
       showsVerticalScrollIndicator={false}>
       <View style={styles.headerRow}>
         <View style={styles.leftSide}>
-          <Text style={styles.welcomeText}>Bienvenue Tomas</Text>
+          <Text style={styles.welcomeText}>
+            {' '}
+            {t('welcome', {name: userName})}
+          </Text>
           <TouchableOpacity style={styles.button}>
             <Icon name="play" size={16} color="#fff" />
-            <Text style={styles.buttonText}>Découvrez-nous</Text>
+            <Text style={styles.buttonText}>{t('discover_us')}</Text>
           </TouchableOpacity>
         </View>
 
