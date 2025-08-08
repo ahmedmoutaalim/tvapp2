@@ -4,8 +4,10 @@ import {categories, products} from '../data/products'
 import CategoryCard from '../components/CategoryCard/CategoryCard'
 import ProductCard from '../components/ProductCard/ProductCard'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
+import {useTranslation} from 'react-i18next'
 
 const Market = () => {
+  const {t} = useTranslation()
   const [selectedCategory, setSelectedCategory] = useState(categories[0])
 
   const getProducts = (categoryName: string) => {
@@ -15,10 +17,7 @@ const Market = () => {
 
   return (
     <View style={styles.container}>
-      <HeadTitle
-        title="marché"
-        description="Faites vos achats sans quitter votre chambre. Produits d’hygiène, accessoires, snacks et bien plus, livrés rapidement à votre porte."
-      />
+      <HeadTitle title={t('market')} description={t('market_description')} />
 
       <ScrollView>
         <Text style={styles.sectionTitle}>Parcourir les catégories</Text>

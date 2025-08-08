@@ -1,5 +1,18 @@
 {
   "welcome": "Welcome {{name}}",
   "discover_us": "Discover Us",
-  "product_title": "Our Products"
+  "market": "Market",
+  "transport": "Transport",
+  "excursions": "Excursions",
+  "apps": "Apps",
+  "market_description": "Shop without leaving your room. Hygiene products, accessories, snacks, and more, delivered quickly to your door.",
+  "transport_description": "Book your transport with ease. From airport transfers to local rides, we have you covered.",
+  "excursions_description": "Explore the best excursions. Discover local attractions, guided tours, and unique experiences tailored for you.",
+  "restaurant": "Restaurant",
+  "restaurant_service": "Restaurant Service",
+  "restaurant_description": "Enjoy a variety of cuisines delivered right to your room. From local delicacies to international favorites, we have something for everyone.",
+  "offer_of_the_day": "Offer of the Day",
+  "breakfast": "Breakfast",
+  "dinner": "Dinner",
+  "dessert": "Dessert"
 }

@@ -1,13 +1,13 @@
-import React, {useRef, useState} from 'react'
+import React, {useState} from 'react'
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  Animated,
   FlatList,
   ScrollView,
-  Platform
+  Platform,
+  Image
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
@@ -16,9 +16,26 @@ import {useNavigation} from '@react-navigation/native'
 import {useTranslation} from 'react-i18next'
 
 const cardsData = [
-  {title: 'Market', image: require('../assets/images/menu/food.jpg')},
-  {title: 'Transport', image: require('../assets/images/menu/car.jpg')},
-  {title: 'Excursions', image: require('../assets/images/menu/travel.jpg')}
+  {
+    title: 'market',
+    image: require('../assets/images/menu/food.jpg'),
+    link: 'Market'
+  },
+  {
+    title: 'transport',
+    image: require('../assets/images/menu/car.jpg'),
+    link: 'Transport'
+  },
+  {
+    title: 'excursions',
+    image: require('../assets/images/menu/travel.jpg'),
+    link: 'Trips'
+  },
+  {
+    title: 'restaurant',
+    image: require('../assets/images/menu/food.jpg'),
+    link: 'Restaurant'
+  }
 ]
 
 const CARD_WIDTH = 160
@@ -27,25 +44,14 @@ const VISIBLE_CARDS = 3
 
 const CardItem = ({item, onPress}: {item: any; onPress: () => void}) => {
   const {t} = useTranslation()
-  const scaleAnim = useRef(new Animated.Value(1)).current
   const [isFocused, setIsFocused] = useState(false)
 
   const handleFocus = () => {
     setIsFocused(true)
-    Animated.timing(scaleAnim, {
-      toValue: 1.1,
-      duration: 200,
-      useNativeDriver: true
-    }).start()
   }
 
   const handleBlur = () => {
     setIsFocused(false)
-    Animated.timing(scaleAnim, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true
-    }).start()
   }
 
   return (
@@ -64,21 +70,22 @@ const CardItem = ({item, onPress}: {item: any; onPress: () => void}) => {
             borderWidth: 3
           }
         ]}>
-        <Animated.Image
+        <Image
           source={
             typeof item.image === 'string' ? {uri: item.image} : item.image
           }
-          style={[styles.cardImage, {transform: [{scale: scaleAnim}]}]}
+          style={styles.cardImage}
         />
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
           style={styles.overlay}
         />
-        <Text style={styles.cardText}>{item.title}</Text>
+        <Text style={styles.cardText}>{t(item.title)}</Text>
       </View>
     </TouchableOpacity>
   )
 }
+
 const Home = () => {
   const {t} = useTranslation()
   const navigation = useNavigation()
@@ -96,7 +103,9 @@ const Home = () => {
             {t('welcome', {name: userName})}
           </Text>
           <TouchableOpacity style={styles.button}>
-            <Icon name="play" size={16} color="#fff" />
+            <View style={styles.iconContainer}>
+              <Icon name="play" size={14} color="#fff" />
+            </View>
             <Text style={styles.buttonText}>{t('discover_us')}</Text>
           </TouchableOpacity>
         </View>
@@ -113,7 +122,7 @@ const Home = () => {
           renderItem={({item}) => (
             <CardItem
               item={item}
-              onPress={() => navigation.navigate(item.title)}
+              onPress={() => navigation.navigate(item.link)}
             />
           )}
         />
@@ -148,18 +157,28 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    justifyContent: 'center',
+    paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: '#fff',
-    gap: 8,
-    width: 200
+    width: 200,
+    height: 44
   },
   buttonText: {
     color: '#fff',
     fontWeight: '600',
-    fontSize: 16
+    fontSize: 16,
+    marginLeft: 8,
+    lineHeight: 16,
+    textAlignVertical: 'center'
+  },
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 16,
+    height: 16
   },
   cardsContainer: {
     flexGrow: 0

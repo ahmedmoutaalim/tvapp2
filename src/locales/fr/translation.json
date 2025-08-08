@@ -1,1 +1,18 @@
-{"welcome": "Bienvenue {{name}}", "discover_us": "Découvrez-nous"}
+{
+  "welcome": "Bienvenue {{name}}",
+  "discover_us": "Découvrez-nous",
+  "market": "Marché",
+  "transport": "Transport",
+  "excursions": "Excursions",
+  "apps": "Applications",
+  "market_description": "Faites vos achats sans quitter votre chambre. Produits d’hygiène, accessoires, snacks et bien plus, livrés rapidement à votre porte.",
+  "transport_description": "Réservez votre transport facilement. Des transferts aéroport aux trajets locaux, nous avons ce qu'il vous faut.",
+  "excursions_description": "Explorez les meilleures excursions. Découvrez les attractions locales, les visites guidées et des expériences uniques adaptées pour vous.",
+  "restaurant": "Restaurant",
+  "restaurant_service": "Service de Restaurant",
+  "restaurant_description": "Profitez d'une variété de cuisines livrées directement dans votre chambre. Des délices locaux aux favoris internationaux, nous avons quelque chose pour tout le monde.",
+  "offer_of_the_day": "Offre du Jour",
+  "breakfast": "Petit-déjeuner",
+  "dinner": "Dîner",
+  "dessert": "Dessert"
+}

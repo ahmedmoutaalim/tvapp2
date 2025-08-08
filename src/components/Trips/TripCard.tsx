@@ -31,16 +31,24 @@ const TripCard = ({image, title, category, price, type}: TripCardProps) => {
         </TouchableOpacity>
         <Text>{title}</Text>
       </View>
-      <View style={{flex: 1}}>
-        <Text style={styles.title} numberOfLines={2}>
-          {title}
-        </Text>
-        <Text style={styles.category}>{category}</Text>
-        <Text style={styles.label}>à partir de :</Text>
-        <Text style={styles.price}>{price} MAD</Text>
-        <Text style={styles.type}>{type}</Text>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end'
+        }}>
+        <View>
+          <Text style={styles.title} numberOfLines={2}>
+            {title}
+          </Text>
+          <Text style={styles.category}>{category}</Text>
+          <Text style={styles.label}>à partir de :</Text>
+          <Text style={styles.price}>{price} MAD</Text>
+          <Text style={styles.type}>{type}</Text>
+        </View>
+        <Button title="Réserver" style={styles.button} variant="primary" />
       </View>
-      <Button title="Réserver" style={styles.button} variant="primary" />
     </View>
   )
 }

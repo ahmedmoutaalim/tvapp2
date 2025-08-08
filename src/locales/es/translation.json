@@ -1,1 +1,18 @@
-{"welcome": "Bienvenido {{name}}", "discover_us": "Descúbrenos"}
+{
+  "welcome": "Bienvenido {{name}}",
+  "discover_us": "Descúbrenos",
+  "market": "Mercado",
+  "transport": "Transporte",
+  "excursions": "Excursiones",
+  "apps": "Aplicaciones",
+  "market_description": "Compra sin salir de tu habitación. Productos de higiene, accesorios, snacks y más, entregados rápidamente a tu puerta.",
+  "transport_description": "Reserva tu transporte con facilidad. Desde traslados al aeropuerto hasta viajes locales, te tenemos cubierto.",
+  "excursions_description": "Explora las mejores excursiones. Descubre atracciones locales, visitas guiadas y experiencias únicas adaptadas para ti.",
+  "restaurant": "Restaurante",
+  "restaurant_service": "Servicio de Restaurante",
+  "restaurant_description": "Disfruta de una variedad de cocinas entregadas directamente a tu habitación. Desde delicias locales hasta favoritos internacionales, tenemos algo para todos.",
+  "offer_of_the_day": "Oferta del Día",
+  "breakfast": "Desayuno",
+  "dinner": "Cena",
+  "dessert": "Postre"
+}

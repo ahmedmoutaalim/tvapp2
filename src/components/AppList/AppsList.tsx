@@ -1,134 +1,117 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react'
+import {useTranslation} from 'react-i18next'
 import {
   View,
   Text,
   FlatList,
-  Animated,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   Image,
   StyleSheet,
   NativeModules
-} from 'react-native';
+} from 'react-native'
 
-
-
-const {InstalledApps} = NativeModules;
+const {InstalledApps} = NativeModules
 
 const AppsList = () => {
-const [apps, setApps] = React.useState([]);
-  const [scales, setScales] = React.useState<Animated.Value[]>([]);
-    
-
-  const onPressIn = (index: number) => {
-    Animated.spring(scales[index], {
-      toValue: 1.1,
-      useNativeDriver: true,
-      friction: 5,
-      tension: 150,
-    }).start();
-  };
-
-  const onPressOut = (index: number) => {
-    Animated.spring(scales[index], {
-      toValue: 1,
-      useNativeDriver: true,
-      friction: 5,
-      tension: 150,
-    }).start();
-  };
-
+  const {t} = useTranslation()
+  const [apps, setApps] = useState([])
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
 
   useEffect(() => {
     InstalledApps.getInstalledApps()
-      .then((appsList :any) => {
-        console.log('Installed Apps:', appsList);
-        setApps(appsList);
+      .then((appsList: any) => {
+        console.log('Installed Apps:', appsList)
+        setApps(appsList)
       })
-      .catch((e :any) => console.error(e));
-  }, []);
+      .catch((e: any) => console.error(e))
+  }, [])
 
-  const lunchApp = (packageName: string) => {
+  const launchApp = (packageName: string) => {
     InstalledApps.launchApp(packageName)
       .then(() => console.log(`App ${packageName} launched successfully`))
-        .catch((e: any) => console.error(`Failed to launch app ${packageName}:`, e));
-    };
-
-
-
-  useEffect(() => {
-  setScales(apps.map(() => new Animated.Value(1)));
-}, [apps]);
-
+      .catch((e: any) =>
+        console.error(`Failed to launch app ${packageName}:`, e)
+      )
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Apps</Text>
+      <Text style={styles.title}>{t('apps')}</Text>
 
-      {apps.length > 0 && scales.length === apps.length && <FlatList
-        data={apps}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.packageName}
-        contentContainerStyle={styles.listContainer}
-        style={styles.list}
-        renderItem={({ item, index }) => (
-          <TouchableWithoutFeedback
-            onPressIn={() => {onPressIn(index) ; lunchApp(item.packageName)}}
-            onPressOut={() => onPressOut(index)}
-          >
-            <Animated.View
+      {apps.length > 0 && (
+        <FlatList
+          data={apps}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={item => item.packageName}
+          contentContainerStyle={styles.listContainer}
+          style={styles.list}
+          renderItem={({item, index}) => (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                setFocusedIndex(index)
+                launchApp(item.packageName)
+              }}
               style={[
                 styles.appCard,
-                { transform: [{ scale: scales[index] }] },
-              ]}
-            >
+                focusedIndex === index && styles.appCardFocused
+              ]}>
               <Image
-                source={{ uri: `data:image/png;base64,${item.iconBase64}` }}
+                source={
+                  item.appName === 'YouTube'
+                    ? require('../../assets/icons/apps/youtube.png')
+                    : {uri: `data:image/png;base64,${item.iconBase64}`}
+                }
                 style={styles.appIcon}
                 resizeMode="contain"
               />
-            </Animated.View>
-          </TouchableWithoutFeedback>
-        )}
-      /> }
-      
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
-  );
-};
+  )
+}
 
-export default AppsList;
+export default AppsList
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 30,
+    paddingHorizontal: 16,
+    paddingBottom: 20
   },
   title: {
     color: '#fff',
     fontSize: 24,
     fontWeight: '700',
-    marginBottom: 12,
+    marginBottom: 12
   },
   list: {
-    paddingHorizontal: 20,
-    maxHeight: 140, 
+    maxHeight: 140
   },
   listContainer: {
     paddingLeft: 4,
+    paddingRight: 4
   },
   appCard: {
     width: 150,
-    height: 90,
+    height: 100,
     backgroundColor: '#fff',
-    borderRadius: 12,
-    marginRight: 16,
+    borderRadius: 10,
+    marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
+    borderWidth: 2,
+    borderColor: 'transparent'
+  },
+  appCardFocused: {
+    borderColor: '#fff'
   },
   appIcon: {
     width: '100%',
-    height: '100%',
-    marginBottom: 8,
-  },
-  
-});
+    height: '100%'
+  }
+})

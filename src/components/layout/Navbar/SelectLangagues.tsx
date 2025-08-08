@@ -1,22 +1,28 @@
 import React, {useState} from 'react'
 import {View, TouchableOpacity, Image, StyleSheet, Text} from 'react-native'
 import i18n from '../../../../i18n'
+import {useLoading} from '../../../context/LoadingContext'
 
 const languages = [
-  {code: 'en', flag: 'https://flagcdn.com/w20/gb.png'},
-  {code: 'fr', flag: 'https://flagcdn.com/w20/fr.png'},
-  {code: 'ar', flag: 'https://flagcdn.com/w20/ma.png'},
-  {code: 'es', flag: 'https://flagcdn.com/w20/es.png'}
+  {code: 'en', flag: 'https://flagcdn.com/w80/gb.png'},
+  {code: 'fr', flag: 'https://flagcdn.com/w80/fr.png'},
+  {code: 'ar', flag: 'https://flagcdn.com/w80/ma.png'},
+  {code: 'es', flag: 'https://flagcdn.com/w80/es.png'}
 ]
 
 const SelectLanguages = () => {
   const [selectedLang, setSelectedLang] = useState(i18n.language || 'en')
   const [isExpanded, setIsExpanded] = useState(false)
+  const {setLoading} = useLoading()
 
   const changeLanguage = (lng: string) => {
+    setLoading(true)
     i18n.changeLanguage(lng)
     setSelectedLang(lng)
     setIsExpanded(false)
+    setTimeout(() => {
+      setLoading(false)
+    }, 1000)
   }
 
   const toggleExpanded = () => {
@@ -34,6 +40,7 @@ const SelectLanguages = () => {
         <Image
           source={{uri: selectedLanguage?.flag}}
           style={styles.circleFlag}
+          resizeMode="cover"
         />
       </TouchableOpacity>
 
@@ -57,6 +64,7 @@ const SelectLanguages = () => {
                     <Image
                       source={{uri: lang.flag}}
                       style={styles.optionFlag}
+                      resizeMode="cover"
                     />
                   </View>
 

@@ -30,13 +30,13 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 10
   },
   description: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#ccc'
   }
 })

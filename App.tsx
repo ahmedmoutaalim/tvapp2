@@ -11,39 +11,44 @@ import Market from './src/screens/Market'
 import Trip from './src/screens/Trip'
 import Cart from './src/screens/Cart'
 import './i18n'
+import {LoadingProvider} from './src/context/LoadingContext'
+import Restaurant from './src/screens/Restaurant'
 
 const Stack = createNativeStackNavigator()
 
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer>
-      <ImageBackground
-        source={require('./src/assets/images/bghotel.jpg')}
-        style={styles.bg}
-        resizeMode="cover">
-        <LinearGradient
-          colors={['rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.46)']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          style={styles.gradient}>
-          <Navbar />
-          <View style={styles.content}>
-            <Sidebar />
-            <Stack.Navigator
-              screenOptions={{
-                headerShown: false,
-                contentStyle: {backgroundColor: 'transparent'}
-              }}>
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Market" component={Market} />
-              <Stack.Screen name="Trips" component={Trip} />
-              <Stack.Screen name="Cart" component={Cart} />
-            </Stack.Navigator>
-          </View>
-        </LinearGradient>
-        <Footer />
-      </ImageBackground>
-    </NavigationContainer>
+    <LoadingProvider>
+      <NavigationContainer>
+        <ImageBackground
+          source={require('./src/assets/images/bghotel.jpg')}
+          style={styles.bg}
+          resizeMode="cover">
+          <LinearGradient
+            colors={['rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.46)']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={styles.gradient}>
+            <Navbar />
+            <View style={styles.content}>
+              <Sidebar />
+              <Stack.Navigator
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: {backgroundColor: 'transparent'}
+                }}>
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Market" component={Market} />
+                <Stack.Screen name="Trips" component={Trip} />
+                <Stack.Screen name="Cart" component={Cart} />
+                <Stack.Screen name="Restaurant" component={Restaurant} />
+              </Stack.Navigator>
+            </View>
+          </LinearGradient>
+          <Footer />
+        </ImageBackground>
+      </NavigationContainer>
+    </LoadingProvider>
   )
 }
 
