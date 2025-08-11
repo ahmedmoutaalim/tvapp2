@@ -1,7 +1,5 @@
 import React, {useState} from 'react'
 import {StyleSheet, Text, View, FlatList, ScrollView} from 'react-native'
-import {categories, products} from '../data/products'
-import ProductCard from '../components/ProductCard/ProductCard'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
 import {useTranslation} from 'react-i18next'
 import RestaurantCard from '../components/RestaurantCard/RestaurantCard'

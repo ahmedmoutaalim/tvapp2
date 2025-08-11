@@ -4,7 +4,6 @@ import {
   Text,
   Image,
   Pressable,
-  View,
   findNodeHandle,
   Platform
 } from 'react-native'

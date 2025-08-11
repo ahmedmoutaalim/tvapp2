@@ -15,7 +15,6 @@ import Button from '../components/Button/Button'
 import {trips} from '../data/trips'
 import TripCard from '../components/Trips/TripCard'
 
-// Responsive utils
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp
