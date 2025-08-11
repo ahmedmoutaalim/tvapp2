@@ -35,6 +35,11 @@ const cardsData = [
     title: 'restaurant',
     image: require('../assets/images/menu/food.jpg'),
     link: 'Restaurant'
+  },
+  {
+    title: 'food',
+    image: require('../assets/images/menu/food.jpg'),
+    link: 'Food'
   }
 ]
 
@@ -122,7 +127,7 @@ const Home = () => {
           renderItem={({item}) => (
             <CardItem
               item={item}
-              onPress={() => navigation.navigate(item.link)}
+              onPress={() => navigation.navigate(item.link as never)}
             />
           )}
         />

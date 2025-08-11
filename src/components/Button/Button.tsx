@@ -57,7 +57,7 @@ const Button = ({
 
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={() => console.log('Button pressed')}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       style={[

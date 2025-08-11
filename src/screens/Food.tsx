@@ -7,74 +7,74 @@ import {useTranslation} from 'react-i18next'
 import RestaurantCard from '../components/RestaurantCard/RestaurantCard'
 
 const data = {
-  offer_of_the_day: [
+  tacos: [
     {
       id: 1,
-      title: 'Pizza Margherita',
+      title: 'Tacos',
       price: 12.99,
-      image: require('../assets/food1.jpg'),
+      image: require('../assets/tacos.jpg'),
       description: 'Classic pizza with fresh tomatoes, mozzarella, and basil.'
     },
     {
       id: 2,
       title: 'Caesar Salad',
       price: 8.99,
-      image: require('../assets/food2.jpg'),
+      image: require('../assets/salad.jpg'),
       description: 'Crisp romaine lettuce with Caesar dressing, croutons.'
     },
     {
       id: 3,
       title: 'Pizza Margherita',
       price: 12.99,
-      image: require('../assets/food1.jpg'),
+      image: require('../assets/salad.jpg'),
       description: 'Classic pizza with fresh tomatoes, mozzarella, and basil.'
     },
     {
       id: 4,
       title: 'Caesar Salad',
       price: 8.99,
-      image: require('../assets/food2.jpg'),
+      image: require('../assets/tacos.jpg'),
       description: 'Crisp romaine lettuce with Caesar dressing, croutons.'
     }
   ],
-  breakfast: [
+  Pizzas: [
     {
       id: 3,
-      title: 'Continental Breakfast',
+      title: 'Pizza',
       price: 5.99,
-      image: require('../assets/food1.jpg'),
+      image: require('../assets/salad.jpg'),
       description: 'A selection of pastries, fruits, and coffee.'
     },
     {
       id: 4,
-      title: 'Full English Breakfast',
+      title: 'Pizza',
       price: 10.99,
-      image: require('../assets/food2.jpg'),
+      image: require('../assets/tacos.jpg'),
       description: 'Eggs, bacon, sausages, beans, and toast.'
     }
   ],
-  dinner: [
+  sandwish: [
     {
       id: 5,
-      title: 'Grilled Salmon',
+      title: 'sandwish',
       price: 15.99,
-      image: require('../assets/food1.jpg'),
+      image: require('../assets/tacos.jpg'),
       description: 'Fresh salmon fillet grilled to perfection.'
     },
     {
       id: 6,
-      title: 'Steak and Fries',
+      title: 'sandwish',
       price: 18.99,
-      image: require('../assets/food2.jpg'),
+      image: require('../assets/salad.jpg'),
       description: 'Juicy steak served with crispy fries.'
     }
   ],
-  dessert: [
+  accompagnements: [
     {
       id: 7,
-      title: 'Chocolate Cake',
+      title: 'accompagnement Cake',
       price: 6.99,
-      image: require('../assets/food1.jpg'),
+      image: require('../assets/tacos.jpg'),
       description: 'Rich chocolate cake with a creamy frosting.'
     },
     {
@@ -86,48 +86,45 @@ const data = {
     }
   ]
 }
-const Restaurant = () => {
+const Food = () => {
   const {t} = useTranslation()
 
   return (
     <View style={styles.container}>
-      <HeadTitle
-        title={t('restaurant_service')}
-        description={t('restaurant_description')}
-      />
+      <HeadTitle title={t('food')} description={t('food_description')} />
 
       <ScrollView>
-        <Text style={styles.sectionTitle}>{t('offer_of_the_day')}</Text>
+        <Text style={styles.sectionTitle}>{t('tacos')}</Text>
 
         <FlatList
-          data={data.offer_of_the_day}
+          data={data.tacos}
           horizontal
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.productsList}
           renderItem={({item}) => <RestaurantCard item={item} />}
         />
 
-        <Text style={styles.sectionTitle}>{t('breakfast')}</Text>
+        <Text style={styles.sectionTitle}>{t('Pizzas')}</Text>
         <FlatList
-          data={data.breakfast}
+          data={data.Pizzas}
           keyExtractor={item => item.id.toString()}
           horizontal
           contentContainerStyle={styles.productsList}
           renderItem={({item}) => <RestaurantCard item={item} />}
         />
 
-        <Text style={styles.sectionTitle}>{t('dinner')}</Text>
+        <Text style={styles.sectionTitle}>{t('sandwish')}</Text>
         <FlatList
-          data={data.dinner}
+          data={data.sandwish}
           keyExtractor={item => item.id.toString()}
           horizontal
           contentContainerStyle={styles.productsList}
           renderItem={({item}) => <RestaurantCard item={item} />}
         />
 
-        <Text style={styles.sectionTitle}>{t('dessert')}</Text>
+        <Text style={styles.sectionTitle}>{t('accompagnements')}</Text>
         <FlatList
-          data={data.dessert}
+          data={data.accompagnements}
           keyExtractor={item => item.id.toString()}
           horizontal
           contentContainerStyle={styles.productsList}
@@ -138,7 +135,7 @@ const Restaurant = () => {
   )
 }
 
-export default Restaurant
+export default Food
 
 const styles = StyleSheet.create({
   container: {

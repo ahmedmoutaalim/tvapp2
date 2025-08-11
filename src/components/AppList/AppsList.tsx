@@ -10,6 +10,11 @@ import {
   NativeModules
 } from 'react-native'
 
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from 'react-native-responsive-screen'
+
 const {InstalledApps} = NativeModules
 
 const AppsList = () => {
@@ -20,7 +25,6 @@ const AppsList = () => {
   useEffect(() => {
     InstalledApps.getInstalledApps()
       .then((appsList: any) => {
-        console.log('Installed Apps:', appsList)
         setApps(appsList)
       })
       .catch((e: any) => console.error(e))
@@ -78,40 +82,45 @@ export default AppsList
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
-    paddingHorizontal: 16,
-    paddingBottom: 20
+    marginTop: hp('4%'),
+    paddingBottom: hp('3%')
   },
   title: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: wp('3%'),
     fontWeight: '700',
-    marginBottom: 12
+    marginBottom: hp('2%')
   },
   list: {
-    maxHeight: 140
+    maxHeight: hp('20%')
   },
   listContainer: {
-    paddingLeft: 4,
-    paddingRight: 4
+    paddingLeft: wp('1%'),
+    paddingRight: wp('1%')
   },
   appCard: {
-    width: 150,
-    height: 100,
+    width: wp('18%'),
+    height: hp('16%'),
     backgroundColor: '#fff',
-    borderRadius: 10,
-    marginRight: 12,
+    borderRadius: wp('0.8%'),
+    marginRight: wp('3%'),
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
+    padding: wp('1%'),
     borderWidth: 2,
-    borderColor: 'transparent'
+    borderColor: 'transparent',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3
   },
   appCardFocused: {
-    borderColor: '#fff'
+    borderColor: '#fff',
+    transform: [{scale: 1.05}]
   },
   appIcon: {
-    width: '100%',
-    height: '100%'
+    width: '90%',
+    height: '90%'
   }
 })

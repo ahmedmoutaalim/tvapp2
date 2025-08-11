@@ -7,6 +7,11 @@ import {
   ImageSourcePropType
 } from 'react-native'
 import React, {useState} from 'react'
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from 'react-native-responsive-screen'
+import {RFValue} from 'react-native-responsive-fontsize'
 
 interface Product {
   id: number
@@ -44,11 +49,11 @@ export default RestaurantCard
 
 const styles = StyleSheet.create({
   container: {
-    marginRight: 20,
+    marginRight: wp('1%'),
     alignItems: 'center',
-    borderRadius: 15,
+    borderRadius: wp('1%'),
     backgroundColor: '#1D272E',
-    width: 300,
+    width: wp('30%'),
     overflow: 'hidden',
     borderWidth: 3,
     borderColor: 'transparent',
@@ -56,25 +61,25 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 150
+    height: hp('22%')
   },
   content: {
-    padding: 10,
+    padding: wp('0.8%'),
     width: '100%'
   },
   title: {
     color: 'white',
-    fontSize: 20,
-    marginBottom: 5
+    fontSize: RFValue(12),
+    fontWeight: '600'
   },
   description: {
     color: 'white',
-    fontSize: 12,
-    marginBottom: 5
+    fontSize: RFValue(9)
   },
   price: {
     color: 'white',
-    fontSize: 16
+    fontSize: RFValue(12),
+    fontWeight: '500'
   },
   focused: {
     borderColor: 'white'

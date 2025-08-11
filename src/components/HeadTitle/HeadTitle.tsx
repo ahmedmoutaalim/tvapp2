@@ -3,7 +3,7 @@ import React from 'react'
 
 interface HeadTitleProps {
   title: string
-  description: string
+  description?: string
   customStyles?: {
     header?: object
     title?: object
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 10

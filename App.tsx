@@ -13,6 +13,8 @@ import Cart from './src/screens/Cart'
 import './i18n'
 import {LoadingProvider} from './src/context/LoadingContext'
 import Restaurant from './src/screens/Restaurant'
+import Food from './src/screens/Food'
+import TripDetails from './src/screens/TripDetails'
 
 const Stack = createNativeStackNavigator()
 
@@ -35,13 +37,20 @@ function App(): React.JSX.Element {
               <Stack.Navigator
                 screenOptions={{
                   headerShown: false,
-                  contentStyle: {backgroundColor: 'transparent'}
+                  contentStyle: {backgroundColor: 'transparent'},
+                  animation: 'slide_from_right'
                 }}>
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="Market" component={Market} />
                 <Stack.Screen name="Trips" component={Trip} />
-                <Stack.Screen name="Cart" component={Cart} />
+                <Stack.Screen
+                  name="Cart"
+                  component={Cart}
+                  options={{animation: 'slide_from_bottom'}}
+                />
                 <Stack.Screen name="Restaurant" component={Restaurant} />
+                <Stack.Screen name="Food" component={Food} />
+                <Stack.Screen name="TripDetails" component={TripDetails} />
               </Stack.Navigator>
             </View>
           </LinearGradient>

@@ -15,81 +15,86 @@ import Button from '../components/Button/Button'
 import {trips} from '../data/trips'
 import TripCard from '../components/Trips/TripCard'
 
+// Responsive utils
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from 'react-native-responsive-screen'
+import {RFValue} from 'react-native-responsive-fontsize'
+import {useNavigation} from '@react-navigation/native'
+
 const filterOptions = [
   {
     id: 1,
     title: 'Privé et de luxe',
-    icon: <FAIcon name="star" size={22} color="#fff" />
+    icon: <FAIcon name="star" size={RFValue(18)} color="#fff" />
   },
   {
     id: 2,
     title: 'Circuits en 4x4',
-    icon: <FAIcon name="compass" size={22} color="#fff" />
+    icon: <FAIcon name="compass" size={RFValue(18)} color="#fff" />
   },
   {
     id: 3,
     title: 'Circuits d’une demi-journée',
-    icon: <FAIcon name="book-open" size={22} color="#fff" />
+    icon: <FAIcon name="star" size={RFValue(18)} color="#fff" />
   },
   {
     id: 4,
     title: "Excursions d'une journée",
-    icon: <FAIcon name="utensils" size={22} color="#fff" />
+    icon: <FAIcon name="book-open" size={RFValue(18)} color="#fff" />
   }
 ]
 
 const Trip = () => {
+  const navigation = useNavigation()
   return (
-    <View>
+    <View style={{flex: 1, paddingBottom: hp(2)}}>
       <View style={styles.header}>
         <HeadTitle
           title="Découvrez Marrakech et ses merveilles"
           description={`Explorez la ville rouge et ses alentours : désert, montagnes, villages berbères, activités culturelles et aventures inoubliables. Réservez facilement vos excursions depuis notre application.`}
           customStyles={{
-            header: {width: '70%'}
+            header: {width: wp('70%')}
           }}
         />
-        <TouchableOpacity style={styles.deleteButton}>
-          <Icon name="search" size={22} color="#fff" />
+        <TouchableOpacity style={styles.searchButton}>
+          <Icon name="search" size={18} color="#fff" />
         </TouchableOpacity>
       </View>
-      <View style={{paddingHorizontal: 20}}>
+
+      <View style={{paddingHorizontal: wp(3)}}>
         <FlatList
           data={filterOptions}
           keyExtractor={item => item.id.toString()}
           horizontal
-          contentContainerStyle={{paddingVertical: 20}}
+          contentContainerStyle={{paddingVertical: hp(1)}}
           renderItem={({item}) => (
             <Button
               variant="outline"
               title={item.title}
               icon={item.icon}
               style={{
-                marginRight: 10
+                marginRight: wp(2)
               }}
             />
           )}
         />
       </View>
+
       <ScrollView>
         <View>
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 16,
-              color: 'white',
-              marginVertical: 12,
-              paddingHorizontal: 20
-            }}>
-            Recommandé pour vous
-          </Text>
+          <Text style={styles.sectionTitle}>Recommandé pour vous</Text>
           <FlatList
             data={trips}
             keyExtractor={item => item.id.toString()}
             horizontal
-            contentContainerStyle={{paddingLeft: 20}}
+            contentContainerStyle={{paddingLeft: wp(5)}}
             renderItem={({item}) => (
               <TripCard
+                onPress={() =>
+                  navigation.navigate('TripDetails', {id: item.id})
+                }
                 image={item.image}
                 title={item.title}
                 category={item.category}
@@ -99,23 +104,19 @@ const Trip = () => {
             )}
           />
         </View>
-        <View style={{paddingHorizontal: 20, marginTop: 20}}>
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 16,
-              color: 'white',
-              marginBottom: 12
-            }}>
-            Tous les circuits
-          </Text>
+
+        <View style={{marginTop: hp(3)}}>
+          <Text style={styles.sectionTitle}>Tous les circuits</Text>
           <FlatList
             data={trips}
             keyExtractor={item => item.id.toString()}
             horizontal
-            contentContainerStyle={{paddingLeft: 20}}
+            contentContainerStyle={{paddingLeft: wp(5)}}
             renderItem={({item}) => (
               <TripCard
+                onPress={() =>
+                  navigation.navigate('TripDetails', {id: item.id})
+                }
                 image={item.image}
                 title={item.title}
                 category={item.category}
@@ -136,16 +137,22 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-
-    paddingHorizontal: 10
+    paddingHorizontal: wp(3)
   },
-  deleteButton: {
-    padding: 10,
+  searchButton: {
+    padding: wp(1),
     backgroundColor: '#D9D9D980',
-    borderRadius: '100%',
-    height: 45,
-    width: 45,
+    borderRadius: wp(50),
+    height: wp(4),
+    width: wp(4),
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  sectionTitle: {
+    fontWeight: 'bold',
+    fontSize: RFValue(14),
+    color: 'white',
+    marginVertical: hp(1.5),
+    paddingHorizontal: wp(3)
   }
 })

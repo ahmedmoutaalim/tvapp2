@@ -14,5 +14,8 @@
   "offer_of_the_day": "Oferta del Día",
   "breakfast": "Desayuno",
   "dinner": "Cena",
-  "dessert": "Postre"
+  "dessert": "Postre",
+  "food": "Comida",
+  "food_description": "Disfruta de una variedad de cocinas entregadas directamente a tu habitación. Desde delicias locales hasta favoritos internacionales, tenemos algo para todos.",
+  "book_now": "Reservar Ahora"
 }

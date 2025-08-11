@@ -1,5 +1,14 @@
 import React, {useState} from 'react'
-import {View, TouchableOpacity, Image, StyleSheet, Text} from 'react-native'
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Text,
+  I18nManager,
+  Alert
+} from 'react-native'
+import RNRestart from 'react-native-restart'
 import i18n from '../../../../i18n'
 import {useLoading} from '../../../context/LoadingContext'
 
@@ -20,6 +29,13 @@ const SelectLanguages = () => {
     i18n.changeLanguage(lng)
     setSelectedLang(lng)
     setIsExpanded(false)
+
+    const isRTL = lng === 'ar'
+    if (I18nManager.isRTL !== isRTL) {
+      I18nManager.forceRTL(isRTL)
+      I18nManager.allowRTL(isRTL)
+    }
+
     setTimeout(() => {
       setLoading(false)
     }, 1000)
