@@ -6,7 +6,6 @@
   "excursions": "Excursions",
   "apps": "Apps",
   "market_description": "Shop without leaving your room. Hygiene products, accessories, snacks, and more, delivered quickly to your door.",
-  "transport_description": "Book your transport with ease. From airport transfers to local rides, we have you covered.",
   "excursions_description": "Explore the best excursions. Discover local attractions, guided tours, and unique experiences tailored for you.",
   "restaurant": "Restaurant",
   "restaurant_service": "Restaurant Service",
@@ -18,5 +17,12 @@
   "food": "Food",
   "food_description": "Enjoy a variety of cuisines delivered right to your room. From local delicacies to international favorites, we have something for everyone.",
   "book_now": "Book Now",
-  "Dinner show in the Agafay desert with quad biking and camels": "Dinner show in the Agafay desert with quad biking and camels"
+  "Dinner show in the Agafay desert with quad biking and camels": "Dinner show in the Agafay desert with quad biking and camels",
+  "transport_&_transfers": "Transport & Transfers",
+  "private": "Private",
+  "airport": "Airport",
+  "transport_description": "Enjoy a reliable, comfortable, and secure transportation service, available 24/7 for all your travel needs. Whether it's for an airport transfer, a city outing, an excursion, or a business trip, our modern fleet and experienced drivers guarantee a worry-free journey.",
+  "collective_transport_system": "Collective Transport System",
+  "taxi_and_shuttles": "Taxi and Shuttles",
+  "recommended_transport": "Recommended means of transport"
 }

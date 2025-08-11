@@ -15,6 +15,7 @@ import {LoadingProvider} from './src/context/LoadingContext'
 import Restaurant from './src/screens/Restaurant'
 import Food from './src/screens/Food'
 import TripDetails from './src/screens/TripDetails'
+import Transport from './src/screens/Transport'
 
 const Stack = createNativeStackNavigator()
 
@@ -51,6 +52,7 @@ function App(): React.JSX.Element {
                 <Stack.Screen name="Restaurant" component={Restaurant} />
                 <Stack.Screen name="Food" component={Food} />
                 <Stack.Screen name="TripDetails" component={TripDetails} />
+                <Stack.Screen name="Transport" component={Transport} />
               </Stack.Navigator>
             </View>
           </LinearGradient>
@@ -72,6 +74,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingBottom: 20
   }
 })
