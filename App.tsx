@@ -16,6 +16,8 @@ import Restaurant from './src/screens/Restaurant'
 import Food from './src/screens/Food'
 import TripDetails from './src/screens/TripDetails'
 import Transport from './src/screens/Transport'
+import Massage from './src/screens/Massage'
+import Spa from './src/screens/Spa'
 
 const Stack = createNativeStackNavigator()
 
@@ -53,6 +55,8 @@ function App(): React.JSX.Element {
                 <Stack.Screen name="Food" component={Food} />
                 <Stack.Screen name="TripDetails" component={TripDetails} />
                 <Stack.Screen name="Transport" component={Transport} />
+                <Stack.Screen name="Massage" component={Massage} />
+                <Stack.Screen name="Spa" component={Spa} />
               </Stack.Navigator>
             </View>
           </LinearGradient>

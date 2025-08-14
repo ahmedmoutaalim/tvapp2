@@ -18,7 +18,7 @@ import {useTranslation} from 'react-i18next'
 const cardsData = [
   {
     title: 'market',
-    image: require('../assets/images/menu/food.jpg'),
+    image: require('../assets/images/menu/market.jpg'),
     link: 'Market'
   },
   {
@@ -40,6 +40,16 @@ const cardsData = [
     title: 'food',
     image: require('../assets/images/menu/food.jpg'),
     link: 'Food'
+  },
+  {
+    title: 'massage',
+    image: require('../assets/images/menu/massage.jpg'),
+    link: 'Massage'
+  },
+  {
+    title: 'spa',
+    image: require('../assets/images/menu/spa.jpg'),
+    link: 'Spa'
   }
 ]
 
