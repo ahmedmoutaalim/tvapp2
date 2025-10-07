@@ -67,7 +67,7 @@ const TripDetails = () => {
               <Text style={styles.textInfoItem}>Billet mobile</Text>
             </View>
             <View style={styles.infoItem}>
-              <AntDesignIcon name="global" size={20} color="#fff" />
+              <Icon name="ticket-outline" size={20} color="#fff" />
               <Text style={styles.textInfoItem}>Guide : Anglais, Français</Text>
             </View>
           </View>

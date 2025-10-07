@@ -24,18 +24,27 @@ const TripCard = ({
   const [isFocused, setIsFocused] = useState(false)
 
   return (
-    <View style={styles.card} onTouchStart={onPress}>
+    <TouchableOpacity
+      style={[styles.card, isFocused && styles.cardFocused]}
+      onPress={onPress}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+      onPressIn={() => setIsFocused(true)}
+      onPressOut={() => setIsFocused(false)}
+      activeOpacity={0.9}>
       <View style={{position: 'relative', marginBottom: 10}}>
         <Image source={image} style={styles.image} />
         <TouchableOpacity style={styles.heartButton}>
           <Icon name="heart" size={18} color="#000" />
         </TouchableOpacity>
       </View>
+
       <Text style={styles.title} numberOfLines={2}>
         {title}
       </Text>
       <Text style={styles.category}>{category}</Text>
       <Text style={styles.label}>à partir de :</Text>
+
       <View style={styles.priceRow}>
         <View>
           <Text style={styles.price}>{price} MAD</Text>
@@ -45,20 +54,14 @@ const TripCard = ({
         <View style={styles.buttonWrapper}>
           <Button
             title={t('book_now')}
-            style={[styles.button, isFocused && styles.buttonFocused]}
+            style={styles.button}
             textStyle={{color: 'black'}}
             variant="primary"
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            onPressIn={() => {
-              setIsFocused(true)
-            }}
-            onPressOut={() => setIsFocused(false)}
             onPress={() => console.log('Book Now pressed')}
           />
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 
@@ -68,7 +71,12 @@ const styles = StyleSheet.create({
   card: {
     width: 220,
     marginRight: 20,
-    paddingBottom: 20
+    paddingBottom: 20,
+    borderRadius: 14
+  },
+  cardFocused: {
+    borderWidth: 2,
+    borderColor: 'white'
   },
   image: {
     width: '100%',
@@ -118,10 +126,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 30,
     backgroundColor: '#92CC97'
-  },
-  buttonFocused: {
-    borderWidth: 2,
-    borderColor: 'white'
   },
   type: {
     color: '#ccc',
