@@ -1,14 +1,14 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   View,
   TouchableOpacity,
   Image,
   StyleSheet,
   Text,
-  I18nManager,
-  Alert
+  I18nManager
 } from 'react-native'
 import RNRestart from 'react-native-restart'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import i18n from '../../../../i18n'
 import {useLoading} from '../../../context/LoadingContext'
 
@@ -19,26 +19,51 @@ const languages = [
   {code: 'es', flag: 'https://flagcdn.com/w80/es.png'}
 ]
 
+const LANGUAGE_KEY = 'app_language'
+
 const SelectLanguages = () => {
   const [selectedLang, setSelectedLang] = useState(i18n.language || 'en')
   const [isExpanded, setIsExpanded] = useState(false)
   const {setLoading} = useLoading()
 
-  const changeLanguage = (lng: string) => {
+  useEffect(() => {
+    const loadLang = async () => {
+      const storedLang = await AsyncStorage.getItem(LANGUAGE_KEY)
+      if (storedLang && storedLang !== selectedLang) {
+        i18n.changeLanguage(storedLang)
+        setSelectedLang(storedLang)
+        const isRTL = storedLang === 'ar'
+        if (I18nManager.isRTL !== isRTL) {
+          I18nManager.allowRTL(isRTL)
+          I18nManager.forceRTL(isRTL)
+          RNRestart.restart()
+        }
+      }
+    }
+    loadLang()
+  }, [])
+
+  const changeLanguage = async (lng: string) => {
     setLoading(true)
     i18n.changeLanguage(lng)
     setSelectedLang(lng)
     setIsExpanded(false)
 
-    const isRTL = lng === 'ar'
-    if (I18nManager.isRTL !== isRTL) {
-      I18nManager.forceRTL(isRTL)
-      I18nManager.allowRTL(isRTL)
-    }
+    await AsyncStorage.setItem(LANGUAGE_KEY, lng)
 
-    setTimeout(() => {
-      setLoading(false)
-    }, 1000)
+    const isRTL = lng === 'ar'
+
+    if (I18nManager.isRTL !== isRTL) {
+      I18nManager.allowRTL(isRTL)
+      I18nManager.forceRTL(isRTL)
+      setTimeout(() => {
+        RNRestart.restart()
+      }, 500)
+    } else {
+      setTimeout(() => {
+        setLoading(false)
+      }, 1000)
+    }
   }
 
   const toggleExpanded = () => {
@@ -132,10 +157,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 6,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4
-    },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 8,
