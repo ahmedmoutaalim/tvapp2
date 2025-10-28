@@ -53,8 +53,8 @@ const cardsData = [
   }
 ]
 
-const CARD_WIDTH = 160
-const CARD_MARGIN = 16
+const CARD_WIDTH = 180
+const CARD_MARGIN = 20
 const VISIBLE_CARDS = 3
 
 const CardItem = ({item, onPress}: {item: any; onPress: () => void}) => {

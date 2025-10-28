@@ -1,4 +1,9 @@
 {
   "name": "TVTest",
-  "displayName": "TVTest"
+  "displayName": "TVTest",
+  "extra": {
+    "eas": {
+      "projectId": "5037dd93-e00f-4fbc-8ba3-90d90da4757c"
+    }
+  }
 }
