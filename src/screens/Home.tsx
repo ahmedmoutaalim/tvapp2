@@ -104,7 +104,7 @@ const CardItem = ({item, onPress}: {item: any; onPress: () => void}) => {
 const Home = () => {
   const {t} = useTranslation()
   const navigation = useNavigation()
-  const userName = 'Sabir'
+  const userName = 'amine'
 
   return (
     <ScrollView
