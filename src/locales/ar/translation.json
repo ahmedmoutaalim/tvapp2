@@ -1,4 +1,8 @@
 {
+  "room_number": "رقم الغرفة",
+  "enter_room_number": "أدخل رقم الغرفة",
+  "continue": "متابعة",
+  "please_enter_room_number": "الرجاء إدخال رقم غرفتك",
   "welcome": " {{name}} مرحبا",
   "discover_us": "اكتشفنا",
   "market": "السوق",

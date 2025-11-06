@@ -1,4 +1,8 @@
 {
+  "room_number": "Room Number",
+  "enter_room_number": "Enter Room Number",
+  "continue": "Continue",
+  "please_enter_room_number": "Please enter your room number",
   "welcome": "Welcome {{name}}",
   "discover_us": "Discover Us",
   "market": "Market",

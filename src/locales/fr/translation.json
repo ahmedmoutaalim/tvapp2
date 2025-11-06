@@ -1,4 +1,8 @@
 {
+  "room_number": "Numéro de Chambre",
+  "enter_room_number": "Entrez le Numéro de Chambre",
+  "continue": "Continuer",
+  "please_enter_room_number": "Veuillez entrer votre numéro de chambre",
   "welcome": "Bienvenue {{name}}",
   "discover_us": "Découvrez-nous",
   "market": "Marché",

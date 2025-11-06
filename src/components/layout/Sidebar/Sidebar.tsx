@@ -1,39 +1,50 @@
 import {useNavigation} from '@react-navigation/native'
-import React, {useState, useRef} from 'react'
+import React, {useState, useRef, useMemo} from 'react'
 import {View, TouchableOpacity, StyleSheet, Animated} from 'react-native'
 import Icon from 'react-native-vector-icons/Feather'
+import {AppNavigationProp, MainTabParamList} from '../../../navigation/types'
 
-const menu = [
-  {
-    title: 'Search',
-    icon: 'search'
-  },
+interface MenuItem {
+  title: keyof MainTabParamList
+  icon: string
+}
+
+const menu: MenuItem[] = [
   {
     title: 'Home',
     icon: 'home'
   },
   {
-    title: 'Grid',
-    icon: 'grid'
+    title: 'Market',
+    icon: 'shopping-bag'
   },
   {
-    title: 'Play',
-    icon: 'play'
+    title: 'Restaurant',
+    icon: 'coffee'
   },
   {
-    title: 'Favorites',
+    title: 'Trips',
+    icon: 'map'
+  },
+  {
+    title: 'Transport',
+    icon: 'truck'
+  },
+  {
+    title: 'Massage',
     icon: 'heart'
-  },
-  {
-    title: 'User',
-    icon: 'user'
   }
 ]
 
 const Sidebar = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<AppNavigationProp>()
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
-  const animations = useRef(menu.map(() => new Animated.Value(1))).current
+
+  // Initialize animations once
+  const animations = useMemo(
+    () => menu.map(() => new Animated.Value(1)),
+    []
+  )
 
   const handleFocus = (index: number) => {
     setFocusedIndex(index)
@@ -51,7 +62,7 @@ const Sidebar = () => {
     setFocusedIndex(null)
   }
 
-  const handlePress = (index: number) => {
+  const handlePress = (index: number, screenName: keyof MainTabParamList) => {
     Animated.sequence([
       Animated.spring(animations[index], {
         toValue: 0.8,
@@ -66,6 +77,9 @@ const Sidebar = () => {
         useNativeDriver: true
       })
     ]).start()
+
+    // Navigate with type safety
+    navigation.navigate(screenName as never)
   }
 
   return (
@@ -80,10 +94,7 @@ const Sidebar = () => {
           activeOpacity={0.8}
           onFocus={() => handleFocus(index)}
           onBlur={() => handleBlur(index)}
-          onPress={() => {
-            handlePress(index)
-            navigation.navigate(item.title)
-          }}>
+          onPress={() => handlePress(index, item.title)}>
           <Animated.View style={{transform: [{scale: animations[index]}]}}>
             <Icon name={item.icon} size={24} color="#fff" />
           </Animated.View>

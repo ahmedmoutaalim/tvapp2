@@ -2,13 +2,14 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import {useNavigation} from '@react-navigation/native'
+import {AppNavigationProp} from '../../navigation/types'
 
 const CartIcon = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<AppNavigationProp>()
   return (
     <TouchableOpacity
       style={styles.cartIcon}
-      onPress={() => navigation.navigate('Cart')}>
+      onPress={() => navigation.navigate('Cart' as never)}>
       <Ionicons name="cart" size={22} color="#fff" />
       <View style={styles.badge}>
         <Text style={{color: '#fff', fontSize: 14, fontWeight: 'bold'}}>2</Text>

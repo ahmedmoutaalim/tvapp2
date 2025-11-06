@@ -1,84 +1,34 @@
 import React from 'react'
-import {View, StyleSheet, ImageBackground} from 'react-native'
-import LinearGradient from 'react-native-linear-gradient'
-import Navbar from './src/components/layout/Navbar/Navbar'
-import Sidebar from './src/components/layout/Sidebar/Sidebar'
-import Footer from './src/components/layout/Footer/Footer'
 import {NavigationContainer} from '@react-navigation/native'
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
-import Home from './src/screens/Home'
-import Market from './src/screens/Market'
-import Trip from './src/screens/Trip'
-import Cart from './src/screens/Cart'
-import './i18n'
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {LoadingProvider} from './src/context/LoadingContext'
-import Restaurant from './src/screens/Restaurant'
-import Food from './src/screens/Food'
-import TripDetails from './src/screens/TripDetails'
-import Transport from './src/screens/Transport'
-import Massage from './src/screens/Massage'
-import Spa from './src/screens/Spa'
+import {RootNavigator} from './src/navigation'
+import './i18n'
+import {RoomNumberProvider} from './src/context/RoomNumber'
 
-const Stack = createNativeStackNavigator()
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000 // 10 minutes
+    }
+  }
+})
 
 function App(): React.JSX.Element {
   return (
-    <LoadingProvider>
-      <NavigationContainer>
-        <ImageBackground
-          source={require('./src/assets/images/bghotel.jpg')}
-          style={styles.bg}
-          resizeMode="cover">
-          <LinearGradient
-            colors={['rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.46)']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={styles.gradient}>
-            <Navbar />
-            <View style={styles.content}>
-              <Sidebar />
-              <Stack.Navigator
-                screenOptions={{
-                  headerShown: false,
-                  contentStyle: {backgroundColor: 'transparent'},
-                  animation: 'slide_from_right'
-                }}>
-                <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="Market" component={Market} />
-                <Stack.Screen name="Trips" component={Trip} />
-                <Stack.Screen
-                  name="Cart"
-                  component={Cart}
-                  options={{animation: 'slide_from_bottom'}}
-                />
-                <Stack.Screen name="Restaurant" component={Restaurant} />
-                <Stack.Screen name="Food" component={Food} />
-                <Stack.Screen name="TripDetails" component={TripDetails} />
-                <Stack.Screen name="Transport" component={Transport} />
-                <Stack.Screen name="Massage" component={Massage} />
-                <Stack.Screen name="Spa" component={Spa} />
-              </Stack.Navigator>
-            </View>
-          </LinearGradient>
-          <Footer />
-        </ImageBackground>
-      </NavigationContainer>
-    </LoadingProvider>
+    <QueryClientProvider client={queryClient}>
+      <LoadingProvider>
+        <NavigationContainer>
+          <RoomNumberProvider>
+            <RootNavigator />
+          </RoomNumberProvider>
+        </NavigationContainer>
+      </LoadingProvider>
+    </QueryClientProvider>
   )
 }
 
 export default App
-
-const styles = StyleSheet.create({
-  bg: {
-    flex: 1
-  },
-  gradient: {
-    flex: 1
-  },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingBottom: 20
-  }
-})

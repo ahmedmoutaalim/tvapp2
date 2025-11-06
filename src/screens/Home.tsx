@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {
   StyleSheet,
   Text,
@@ -14,6 +14,11 @@ import LinearGradient from 'react-native-linear-gradient'
 import AppsList from '../components/AppList/AppsList'
 import {useNavigation} from '@react-navigation/native'
 import {useTranslation} from 'react-i18next'
+import {AppNavigationProp} from '../navigation/types'
+import {getMeData} from '../services/clientTv'
+import {useQuery} from '@tanstack/react-query'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import RoomNumberModal from './RoomNumber'
 
 const cardsData = [
   {
@@ -103,48 +108,83 @@ const CardItem = ({item, onPress}: {item: any; onPress: () => void}) => {
 
 const Home = () => {
   const {t} = useTranslation()
-  const navigation = useNavigation()
-  const userName = 'amine'
+  const navigation = useNavigation<AppNavigationProp>()
+  const [showModal, setShowModal] = useState(false)
+  const [roomNumber, setRoomNumber] = useState<string | null>('')
+
+  useEffect(() => {
+    console.log('=====roomNumber in Home screen=====', roomNumber)
+  }, [roomNumber])
+
+  // Check if room number exists in AsyncStorage
+  useEffect(() => {
+    const checkRoomNumber = async () => {
+      const storedRoomNumber = await AsyncStorage.getItem('roomNumber')
+      if (storedRoomNumber) {
+        setRoomNumber(storedRoomNumber)
+      } else {
+        setShowModal(true)
+      }
+    }
+    checkRoomNumber()
+  }, [])
+
+  // Fetch user data using useQuery
+  const {data: userData, isLoading} = useQuery({
+    queryKey: ['clientTvData', roomNumber],
+    queryFn: () => getMeData(roomNumber!),
+    enabled: !!roomNumber // Only run query when roomNumber is available
+  })
+
+  const userName = userData?.client?.name
+
+  const handleModalSuccess = (data: any) => {
+    setRoomNumber(data?.roomNumber || '')
+    setShowModal(false)
+  }
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 20}}
-      showsVerticalScrollIndicator={false}>
-      <View style={styles.headerRow}>
-        <View style={styles.leftSide}>
-          <Text style={styles.welcomeText}>
-            {' '}
-            {t('welcome', {name: userName})}
-          </Text>
-          <TouchableOpacity style={styles.button}>
-            <View style={styles.iconContainer}>
-              <Icon name="play" size={14} color="#fff" />
-            </View>
-            <Text style={styles.buttonText}>{t('discover_us')}</Text>
-          </TouchableOpacity>
+    <>
+      <RoomNumberModal visible={showModal} onSuccess={handleModalSuccess} />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 20}}
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.headerRow}>
+          <View style={styles.leftSide}>
+            <Text style={styles.welcomeText}>
+              {' '}
+              {t('welcome', {name: userName})}
+            </Text>
+            <TouchableOpacity style={styles.button}>
+              <View style={styles.iconContainer}>
+                <Icon name="play" size={14} color="#fff" />
+              </View>
+              <Text style={styles.buttonText}>{t('discover_us')}</Text>
+            </TouchableOpacity>
+          </View>
+
+          <FlatList
+            data={cardsData}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={item => item.title}
+            contentContainerStyle={styles.cardsContainer}
+            style={{
+              width: VISIBLE_CARDS * (CARD_WIDTH + CARD_MARGIN) - CARD_MARGIN
+            }}
+            renderItem={({item}) => (
+              <CardItem
+                item={item}
+                onPress={() => navigation.navigate(item.link as never)}
+              />
+            )}
+          />
         </View>
 
-        <FlatList
-          data={cardsData}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={item => item.title}
-          contentContainerStyle={styles.cardsContainer}
-          style={{
-            width: VISIBLE_CARDS * (CARD_WIDTH + CARD_MARGIN) - CARD_MARGIN
-          }}
-          renderItem={({item}) => (
-            <CardItem
-              item={item}
-              onPress={() => navigation.navigate(item.link as never)}
-            />
-          )}
-        />
-      </View>
-
-      <AppsList />
-    </ScrollView>
+        <AppsList />
+      </ScrollView>
+    </>
   )
 }
 
