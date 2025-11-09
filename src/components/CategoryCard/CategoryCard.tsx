@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 
 interface Props {
-  item: string
+  item: string | null
   autoFocus?: boolean
   onPress: () => void
 }

@@ -1,18 +1,74 @@
-import React, {useState} from 'react'
-import {StyleSheet, Text, View, FlatList, ScrollView} from 'react-native'
-import {categories, products} from '../data/products'
+import React, {useState, useMemo} from 'react'
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity
+} from 'react-native'
 import CategoryCard from '../components/CategoryCard/CategoryCard'
 import ProductCard from '../components/ProductCard/ProductCard'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
 import {useTranslation} from 'react-i18next'
+import {useQuery} from '@tanstack/react-query'
+import {getMarketProducts} from '../services/market'
 
 const Market = () => {
   const {t} = useTranslation()
-  const [selectedCategory, setSelectedCategory] = useState(categories[0])
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const getProducts = (categoryName: string) => {
-    const cat = products.find(c => c.category === categoryName)
-    return cat ? cat.products : []
+  const {data, isLoading, error} = useQuery({
+    queryKey: ['marketProducts', currentPage],
+    queryFn: () => getMarketProducts({page: currentPage, limit: 10})
+  })
+
+  const categories = useMemo(() => {
+    if (!data?.marketProducts) return []
+    const uniqueCategories = new Set<string>()
+    data.marketProducts.forEach(product => {
+      uniqueCategories.add(product.category.name)
+    })
+    return Array.from(uniqueCategories)
+  }, [data?.marketProducts])
+
+  const filteredProducts = useMemo(() => {
+    if (!data?.marketProducts) return []
+    if (!selectedCategory) return data.marketProducts
+    return data.marketProducts.filter(
+      product => product.category.name === selectedCategory
+    )
+  }, [data?.marketProducts, selectedCategory])
+
+  const handleCategoryPress = (category: string) => {
+    setSelectedCategory(category === selectedCategory ? null : category)
+  }
+
+  const handleNextPage = () => {
+    if (data && currentPage < data.totalPages) {
+      setCurrentPage(prev => prev + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1)
+    }
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <HeadTitle title={t('market')} description={t('market_description')} />
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>
+            Error loading products. Please try again.
+          </Text>
+        </View>
+      </View>
+    )
   }
 
   return (
@@ -22,29 +78,89 @@ const Market = () => {
       <ScrollView>
         <Text style={styles.sectionTitle}>Parcourir les catégories</Text>
 
-        <FlatList
-          data={categories}
-          horizontal
-          keyExtractor={item => item}
-          contentContainerStyle={styles.categoriesList}
-          renderItem={({item}) => (
-            <CategoryCard
-              item={item}
-              isSelected={selectedCategory === item}
-              onPress={() => setSelectedCategory(item)}
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#fff" style={styles.loader} />
+        ) : (
+          <>
+            <FlatList
+              data={categories}
+              horizontal
+              keyExtractor={item => item}
+              contentContainerStyle={styles.categoriesList}
+              renderItem={({item}) => (
+                <CategoryCard
+                  item={item}
+                  isSelected={selectedCategory === item}
+                  onPress={() => handleCategoryPress(item)}
+                />
+              )}
             />
-          )}
-        />
 
-        <Text style={styles.sectionTitle}>{selectedCategory}</Text>
+            <Text style={styles.sectionTitle}>
+              {selectedCategory || 'All Products'}
+            </Text>
 
-        <FlatList
-          data={getProducts(selectedCategory)}
-          keyExtractor={item => item.id.toString()}
-          horizontal
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <ProductCard item={item} />}
-        />
+            <FlatList
+              data={filteredProducts}
+              keyExtractor={item => item._id}
+              horizontal
+              contentContainerStyle={styles.productsList}
+              renderItem={({item}) => (
+                <ProductCard
+                  item={{
+                    id: item._id,
+                    title: item.title,
+                    price: item.price,
+                    image: item.image
+                  }}
+                />
+              )}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>No products available</Text>
+              }
+            />
+
+            <View style={styles.paginationContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.paginationButton,
+                  currentPage === 1 && styles.paginationButtonDisabled
+                ]}
+                onPress={handlePrevPage}
+                disabled={currentPage === 1}>
+                <Text
+                  style={[
+                    styles.paginationButtonText,
+                    currentPage === 1 && styles.paginationButtonTextDisabled
+                  ]}>
+                  Previous
+                </Text>
+              </TouchableOpacity>
+
+              <Text style={styles.paginationText}>
+                Page {currentPage} of {data?.totalPages || 1}
+              </Text>
+
+              <TouchableOpacity
+                style={[
+                  styles.paginationButton,
+                  currentPage === data?.totalPages &&
+                    styles.paginationButtonDisabled
+                ]}
+                onPress={handleNextPage}
+                disabled={currentPage === data?.totalPages}>
+                <Text
+                  style={[
+                    styles.paginationButtonText,
+                    currentPage === data?.totalPages &&
+                      styles.paginationButtonTextDisabled
+                  ]}>
+                  Next
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </ScrollView>
     </View>
   )
@@ -68,5 +184,56 @@ const styles = StyleSheet.create({
   },
   productsList: {
     paddingVertical: 20
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  loader: {
+    marginTop: 20
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  emptyText: {
+    color: '#999',
+    fontSize: 14,
+    textAlign: 'center',
+    padding: 20
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+    paddingHorizontal: 10
+  },
+  paginationButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    minWidth: 100,
+    alignItems: 'center'
+  },
+  paginationButtonDisabled: {
+    backgroundColor: '#333',
+    opacity: 0.5
+  },
+  paginationButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600'
+  },
+  paginationButtonTextDisabled: {
+    color: '#666'
+  },
+  paginationText: {
+    color: '#fff',
+    fontSize: 14
   }
 })
