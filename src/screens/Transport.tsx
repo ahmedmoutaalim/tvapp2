@@ -4,16 +4,15 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ActivityIndicator
 } from 'react-native'
-import React from 'react'
+import React, {useState} from 'react'
 
 import Icon from 'react-native-vector-icons/Feather'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
 import FAIcon from 'react-native-vector-icons/FontAwesome'
 import Button from '../components/Button/Button'
-import {trips} from '../data/trips'
-import TripCard from '../components/Trips/TripCard'
 
 import {
   widthPercentageToDP as wp,
@@ -23,7 +22,8 @@ import {RFValue} from 'react-native-responsive-fontsize'
 import {useNavigation} from '@react-navigation/native'
 import {useTranslation} from 'react-i18next'
 import TransportCard from '../components/Trips/TransportCard'
-import {transport} from '../data/transport'
+import {useQuery} from '@tanstack/react-query'
+import {getTransportData} from '../services/transport'
 
 const filterOptions = [
   {
@@ -51,6 +51,46 @@ const filterOptions = [
 const Transport = () => {
   const {t} = useTranslation()
   const navigation = useNavigation()
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const {data, isLoading, error} = useQuery({
+    queryKey: ['transport', currentPage],
+    queryFn: () => getTransportData({page: currentPage, limit: 10})
+  })
+
+  const handleNextPage = () => {
+    if (data && currentPage < data.totalPages) {
+      setCurrentPage(prev => prev + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1)
+    }
+  }
+
+  if (error) {
+    return (
+      <View style={{flex: 1, paddingBottom: hp(2)}}>
+        <View style={styles.header}>
+          <HeadTitle
+            title={t('transport_&_transfers')}
+            description={t('transport_description')}
+            customStyles={{
+              header: {width: wp('70%')}
+            }}
+          />
+        </View>
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>
+            Error loading transport data. Please try again.
+          </Text>
+        </View>
+      </View>
+    )
+  }
+
   return (
     <View style={{flex: 1, paddingBottom: hp(2)}}>
       <View style={styles.header}>
@@ -86,27 +126,84 @@ const Transport = () => {
       </View>
 
       <ScrollView>
-        <View>
-          <Text style={styles.sectionTitle}>{t('recommended_transport')}</Text>
-          <FlatList
-            data={transport}
-            keyExtractor={item => item.id.toString()}
-            horizontal
-            contentContainerStyle={{paddingLeft: wp(5)}}
-            renderItem={({item}) => (
-              <TransportCard
-                onPress={() =>
-                  navigation.navigate('TripDetails', {id: item.id})
+        {isLoading ? (
+          <View style={styles.centerContainer}>
+            <ActivityIndicator size="large" color="#fff" />
+          </View>
+        ) : (
+          <>
+            <View>
+              <Text style={styles.sectionTitle}>
+                {t('recommended_transport')}
+              </Text>
+              <FlatList
+                data={data?.transports || []}
+                keyExtractor={item => item._id}
+                horizontal
+                contentContainerStyle={{paddingLeft: wp(5)}}
+                renderItem={({item}) => (
+                  <TransportCard
+                    onPress={() =>
+                      navigation.navigate('TripDetails', {id: item._id})
+                    }
+                    image={item.image}
+                    title={item.title}
+                    category={item.category.name}
+                    price={item.price}
+                    delay={item.delay}
+                  />
+                )}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>
+                    No transport options available
+                  </Text>
                 }
-                image={item.image}
-                title={item.title}
-                category={item.category}
-                price={item.price}
-                delay={item.delay}
               />
+            </View>
+
+            {data && data.totalPages > 1 && (
+              <View style={styles.paginationContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.paginationButton,
+                    currentPage === 1 && styles.paginationButtonDisabled
+                  ]}
+                  onPress={handlePrevPage}
+                  disabled={currentPage === 1}>
+                  <Text
+                    style={[
+                      styles.paginationButtonText,
+                      currentPage === 1 && styles.paginationButtonTextDisabled
+                    ]}>
+                    Previous
+                  </Text>
+                </TouchableOpacity>
+
+                <Text style={styles.paginationText}>
+                  Page {currentPage} of {data.totalPages}
+                </Text>
+
+                <TouchableOpacity
+                  style={[
+                    styles.paginationButton,
+                    currentPage === data.totalPages &&
+                      styles.paginationButtonDisabled
+                  ]}
+                  onPress={handleNextPage}
+                  disabled={currentPage === data.totalPages}>
+                  <Text
+                    style={[
+                      styles.paginationButtonText,
+                      currentPage === data.totalPages &&
+                        styles.paginationButtonTextDisabled
+                    ]}>
+                    Next
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
-          />
-        </View>
+          </>
+        )}
       </ScrollView>
     </View>
   )
@@ -135,5 +232,54 @@ const styles = StyleSheet.create({
     color: 'white',
     marginVertical: hp(1.5),
     paddingHorizontal: wp(3)
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: hp(5)
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: RFValue(14),
+    textAlign: 'center'
+  },
+  emptyText: {
+    color: '#999',
+    fontSize: RFValue(12),
+    textAlign: 'center',
+    padding: wp(5)
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: hp(2),
+    marginBottom: hp(2),
+    paddingHorizontal: wp(5)
+  },
+  paginationButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: wp(5),
+    paddingVertical: hp(1.5),
+    borderRadius: wp(2),
+    minWidth: wp(25),
+    alignItems: 'center'
+  },
+  paginationButtonDisabled: {
+    backgroundColor: '#333',
+    opacity: 0.5
+  },
+  paginationButtonText: {
+    color: '#fff',
+    fontSize: RFValue(12),
+    fontWeight: '600'
+  },
+  paginationButtonTextDisabled: {
+    color: '#666'
+  },
+  paginationText: {
+    color: '#fff',
+    fontSize: RFValue(12)
   }
 })

@@ -22,11 +22,33 @@ const TransportCard = ({
   delay
 }: TripCardProps) => {
   const [isFocused, setIsFocused] = useState(false)
+  const [imageError, setImageError] = useState(false)
+
+  console.log('image transport', image)
+  console.log('image type:', typeof image)
+
+  const imageSource = typeof image === 'string' ? {uri: image} : image
 
   return (
     <View style={styles.card} onTouchStart={onPress}>
       <View style={{position: 'relative', marginBottom: 10}}>
-        <Image source={image} style={styles.image} />
+        {!imageError ? (
+          <Image
+            source={imageSource}
+            style={styles.image}
+            resizeMode="cover"
+            onError={error => {
+              console.log('Image loading error:', error.nativeEvent.error)
+              console.log('Failed URL:', image)
+              setImageError(true)
+            }}
+            onLoad={() => console.log('Image loaded successfully:', image)}
+          />
+        ) : (
+          <View style={[styles.image, styles.imagePlaceholder]}>
+            <Icon name="image" size={50} color="#666" />
+          </View>
+        )}
         <TouchableOpacity style={styles.heartButton}>
           <Icon name="heart" size={18} color="#000" />
         </TouchableOpacity>
@@ -56,7 +78,13 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 200,
-    borderRadius: 14
+    borderRadius: 14,
+    backgroundColor: '#1a1a1a'
+  },
+  imagePlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2a2a2a'
   },
   heartButton: {
     position: 'absolute',
