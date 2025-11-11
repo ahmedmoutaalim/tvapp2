@@ -3,17 +3,24 @@ import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import {useNavigation} from '@react-navigation/native'
 import {AppNavigationProp} from '../../navigation/types'
+import {useCart} from '../../context/CartContext'
 
 const CartIcon = () => {
   const navigation = useNavigation<AppNavigationProp>()
+  const {cart} = useCart()
+
   return (
     <TouchableOpacity
       style={styles.cartIcon}
       onPress={() => navigation.navigate('Cart' as never)}>
       <Ionicons name="cart" size={22} color="#fff" />
-      <View style={styles.badge}>
-        <Text style={{color: '#fff', fontSize: 14, fontWeight: 'bold'}}>2</Text>
-      </View>
+      {cart.totalItems > 0 && (
+        <View style={styles.badge}>
+          <Text style={{color: '#fff', fontSize: 12, fontWeight: 'bold'}}>
+            {cart.totalItems > 99 ? '99+' : cart.totalItems}
+          </Text>
+        </View>
+      )}
     </TouchableOpacity>
   )
 }

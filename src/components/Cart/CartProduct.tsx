@@ -12,23 +12,45 @@ import Icon from 'react-native-vector-icons/Feather'
 interface Props {
   name: string
   price: number
-  image: any
+  image: string
+  quantity: number
   onEdit?: () => void
   onDelete?: () => void
+  onIncreaseQuantity?: () => void
+  onDecreaseQuantity?: () => void
 }
 
-const CartProduct = ({name, price, image, onEdit, onDelete}: Props) => {
+const CartProduct = ({
+  name,
+  price,
+  image,
+  quantity,
+  onEdit,
+  onDelete,
+  onIncreaseQuantity,
+  onDecreaseQuantity
+}: Props) => {
   return (
     <View style={styles.container}>
-      <Image source={image} style={styles.image} />
+      <Image source={{uri: image}} style={styles.image} />
       <View style={styles.details}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.price}>{price.toFixed(2)} MAD</Text>
+        <View style={styles.quantityContainer}>
+          <TouchableHighlight
+            onPress={onDecreaseQuantity}
+            style={styles.quantityBtn}>
+            <Icon name="minus" size={16} color="#fff" />
+          </TouchableHighlight>
+          <Text style={styles.quantity}>{quantity}</Text>
+          <TouchableHighlight
+            onPress={onIncreaseQuantity}
+            style={styles.quantityBtn}>
+            <Icon name="plus" size={16} color="#fff" />
+          </TouchableHighlight>
+        </View>
       </View>
       <View style={styles.actions}>
-        <TouchableHighlight onPress={onEdit} style={styles.iconBtn}>
-          <Icon name="edit-3" size={18} color="#fff" />
-        </TouchableHighlight>
         <TouchableHighlight onPress={onDelete} style={styles.iconBtn}>
           <Icon name="trash-2" size={18} color="#fff" />
         </TouchableHighlight>
@@ -77,5 +99,27 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 100,
     marginLeft: 6
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    gap: 10
+  },
+  quantityBtn: {
+    backgroundColor: '#007AFF',
+    padding: 6,
+    borderRadius: 6,
+    width: 28,
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  quantity: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    minWidth: 30,
+    textAlign: 'center'
   }
 })

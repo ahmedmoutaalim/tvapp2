@@ -1,3 +1,14 @@
+export interface ClientData {
+  _id?: string
+  name: string
+  phone: string
+  roomNumber: string
+  language: string
+  days: number
+  status: string
+  createdAt: string
+}
+
 export interface ClientTvData {
   id: string
   roomNumber: string
@@ -6,6 +17,6 @@ export interface ClientTvData {
 }
 
 export interface GetMeDataResponse {
-  data: ClientTvData
+  client: ClientData
   // Add other response fields as needed
 }

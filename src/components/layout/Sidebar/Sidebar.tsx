@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native'
+import {useNavigation, CommonActions} from '@react-navigation/native'
 import React, {useState, useRef, useMemo} from 'react'
 import {View, TouchableOpacity, StyleSheet, Animated} from 'react-native'
 import Icon from 'react-native-vector-icons/Feather'
@@ -78,8 +78,19 @@ const Sidebar = () => {
       })
     ]).start()
 
-    // Navigate with type safety
-    navigation.navigate(screenName as never)
+    // Navigate properly - check if we need to go to Main first
+    const state = navigation.getState()
+    const currentRoute = state.routes[state.index]
+
+    // If we're currently on a root stack screen (like Cart), navigate to Main first
+    if (currentRoute.name !== 'Main') {
+      navigation.navigate('Main' as never, {
+        screen: screenName
+      } as never)
+    } else {
+      // We're already in Main stack, just navigate directly
+      navigation.navigate(screenName as never)
+    }
   }
 
   return (

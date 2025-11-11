@@ -6,7 +6,10 @@ import {
   FlatList,
   ScrollView,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert,
+  ToastAndroid,
+  Platform
 } from 'react-native'
 import CategoryCard from '../components/CategoryCard/CategoryCard'
 import ProductCard from '../components/ProductCard/ProductCard'
@@ -14,16 +17,34 @@ import HeadTitle from '../components/HeadTitle/HeadTitle'
 import {useTranslation} from 'react-i18next'
 import {useQuery} from '@tanstack/react-query'
 import {getMarketProducts} from '../services/market'
+import {useCart} from '../context/CartContext'
+import {getClientId} from '../utils/clientStorage'
 
 const Market = () => {
   const {t} = useTranslation()
+  const {addToCart} = useCart()
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [clientId, setClientId] = useState<string | null>(null)
 
   const {data, isLoading, error} = useQuery({
     queryKey: ['marketProducts', currentPage],
     queryFn: () => getMarketProducts({page: currentPage, limit: 10})
   })
+
+  // Get client ID from AsyncStorage
+  React.useEffect(() => {
+    const loadClientId = async () => {
+      const id = await getClientId()
+      if (id) {
+        setClientId(id)
+        console.log('✅ Client ID loaded in Market:', id)
+      } else {
+        console.warn('⚠️ No client ID found. Please go to Home first.')
+      }
+    }
+    loadClientId()
+  }, [])
 
   const categories = useMemo(() => {
     if (!data?.marketProducts) return []
@@ -56,6 +77,71 @@ const Market = () => {
     if (currentPage > 1) {
       setCurrentPage(prev => prev - 1)
     }
+  }
+
+  const showToast = (message: string) => {
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(message, ToastAndroid.SHORT)
+    } else {
+      Alert.alert('Success', message)
+    }
+  }
+
+  const handleAddToCart = async (product: any) => {
+    if (!clientId) {
+      console.error('❌ Client ID not available. Please go to Home screen first.')
+      Alert.alert(
+        'Profile Required',
+        'Please visit the Home screen first to load your profile.',
+        [{text: 'OK'}]
+      )
+      return
+    }
+
+    console.log('Adding to cart:', {
+      product_id: product.id,
+      client_id: clientId,
+      type: 'market',
+      title: product.title,
+      price: product.price
+    })
+
+    try {
+      await addToCart({
+        product_id: product.id,
+        client_id: clientId,
+        type: 'market',
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        category: product.category
+      })
+
+      // Show success feedback
+      showToast(`✓ ${product.title} added to cart`)
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+      Alert.alert('Error', 'Failed to add item to cart')
+    }
+  }
+
+  const handleDeleteProduct = (productId: string) => {
+    Alert.alert(
+      'Delete Product',
+      'Are you sure you want to delete this product?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            // TODO: Implement delete product API call
+            console.log('Deleting product:', productId)
+            showToast('Product deleted successfully')
+          }
+        }
+      ]
+    )
   }
 
   if (error) {
@@ -111,8 +197,13 @@ const Market = () => {
                     id: item._id,
                     title: item.title,
                     price: item.price,
-                    image: item.image
+                    image: item.image,
+                    category: item.category.name
                   }}
+                  onAddToCart={handleAddToCart}
+                  onDelete={handleDeleteProduct}
+                  type="market"
+                  showDelete={false} // Set to true if you want delete button on products
                 />
               )}
               ListEmptyComponent={

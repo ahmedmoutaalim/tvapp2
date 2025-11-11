@@ -5,6 +5,7 @@ import {LoadingProvider} from './src/context/LoadingContext'
 import {RootNavigator} from './src/navigation'
 import './i18n'
 import {RoomNumberProvider} from './src/context/RoomNumber'
+import {CartProvider} from './src/context/CartContext'
 
 // Create a client
 const queryClient = new QueryClient({
@@ -21,11 +22,13 @@ function App(): React.JSX.Element {
   return (
     <QueryClientProvider client={queryClient}>
       <LoadingProvider>
-        <NavigationContainer>
-          <RoomNumberProvider>
-            <RootNavigator />
-          </RoomNumberProvider>
-        </NavigationContainer>
+        <CartProvider>
+          <NavigationContainer>
+            <RoomNumberProvider>
+              <RootNavigator />
+            </RoomNumberProvider>
+          </NavigationContainer>
+        </CartProvider>
       </LoadingProvider>
     </QueryClientProvider>
   )

@@ -57,7 +57,7 @@ const Button = ({
 
   return (
     <TouchableOpacity
-      onPress={() => console.log('Button pressed')}
+      onPress={onPress}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       style={[
@@ -71,7 +71,9 @@ const Button = ({
       activeOpacity={0.8}
       hasTVPreferredFocus={false}>
       {icon && icon}
-      <Text style={[getTextStyle(), textStyle, {marginLeft: 8}]}>{title}</Text>
+      <Text style={[getTextStyle(), textStyle, icon ? {marginLeft: 8} : {}]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   )
 }

@@ -19,6 +19,7 @@ import {getMeData} from '../services/clientTv'
 import {useQuery} from '@tanstack/react-query'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import RoomNumberModal from './RoomNumber'
+import {saveClientData} from '../utils/clientStorage'
 
 const cardsData = [
   {
@@ -137,7 +138,18 @@ const Home = () => {
     enabled: !!roomNumber // Only run query when roomNumber is available
   })
 
+  console.log('userData', userData)
+
   const userName = userData?.client?.name
+
+  // Save client data to AsyncStorage when fetched
+  useEffect(() => {
+    if (userData?.client) {
+      saveClientData(userData.client).catch(err =>
+        console.error('Failed to save client data:', err)
+      )
+    }
+  }, [userData])
 
   const handleModalSuccess = (data: any) => {
     setRoomNumber(data?.roomNumber || '')
