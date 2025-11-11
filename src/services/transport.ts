@@ -6,7 +6,7 @@ export const getTransportData = async (
 ): Promise<ITransportResponseData> => {
   try {
     const response = await apiClient.get<ITransportResponseData>(
-      'api/transport',
+      'api/transports',
       {params}
     )
 

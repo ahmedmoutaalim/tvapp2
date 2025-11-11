@@ -1,11 +1,11 @@
-import axios, {AxiosError} from 'axios'
+import {AxiosError} from 'axios'
 import apiClient from '../utils/apiClient'
 
 export const getMeData = async (roomNumber: string) => {
   console.log('==========roomNumber=========', roomNumber)
 
   try {
-    const response = await apiClient.post('api/clientTv/tvlogin', {
+    const response = await apiClient.post<any>('api/clientTv/tvlogin', {
       roomNumber: roomNumber
     })
     console.log('✅ getMeData response:', response)

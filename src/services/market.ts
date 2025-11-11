@@ -8,9 +8,12 @@ export const getMarketProducts = async (
   params?: GetMarketProductsParams
 ): Promise<MarketProductsResponse> => {
   try {
-    const response = await apiClient.get<MarketProductsResponse>('api/market', {
-      params
-    })
+    const response = await apiClient.get<MarketProductsResponse>(
+      'api/markets',
+      {
+        params
+      }
+    )
 
     console.log(
       '================= Market response service ==============',

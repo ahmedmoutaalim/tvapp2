@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
-import Button from '../Button/Button'
 import Icon from 'react-native-vector-icons/Feather'
 import {t} from 'i18next'
 
@@ -34,12 +33,18 @@ const TransportCard = ({
       <View style={{position: 'relative', marginBottom: 10}}>
         {!imageError ? (
           <Image
-            source={imageSource}
+            source={{uri: 'https://picsum.photos/200/300'}}
             style={styles.image}
             resizeMode="cover"
             onError={error => {
-              console.log('Image loading error:', error.nativeEvent.error)
-              console.log('Failed URL:', image)
+              console.log(
+                'image transport full:',
+                JSON.stringify(image, null, 2)
+              )
+              console.log(
+                'imageSource final:',
+                JSON.stringify(imageSource, null, 2)
+              )
               setImageError(true)
             }}
             onLoad={() => console.log('Image loaded successfully:', image)}

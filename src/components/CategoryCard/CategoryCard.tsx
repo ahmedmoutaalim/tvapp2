@@ -5,16 +5,24 @@ import {
   Image,
   Pressable,
   findNodeHandle,
-  Platform
+  Platform,
+  View
 } from 'react-native'
 
+interface Category {
+  id: string
+  name: string
+  image: string
+}
+
 interface Props {
-  item: string | null
+  item: any
+  isSelected: boolean
   autoFocus?: boolean
   onPress: () => void
 }
 
-const CategoryCard = ({item, autoFocus, onPress}: Props) => {
+const CategoryCard = ({item, isSelected, autoFocus, onPress}: Props) => {
   const ref = useRef<any>(null)
   const [isFocused, setIsFocused] = useState(false)
 
@@ -37,12 +45,14 @@ const CategoryCard = ({item, autoFocus, onPress}: Props) => {
       onPress={onPress}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
-      style={[styles.container]}>
-      <Image
-        source={require('../../assets/images/products/cat/cat1.jpg')}
-        style={[styles.image, isFocused && styles.focused]}
-      />
-      <Text style={styles.label}>{item}</Text>
+      style={[
+        styles.container,
+        isSelected && styles.selectedContainer,
+        isFocused && styles.focusedContainer
+      ]}>
+      <Text style={[styles.label, isSelected && styles.selectedText]}>
+        {item}
+      </Text>
     </Pressable>
   )
 }
@@ -51,23 +61,50 @@ export default CategoryCard
 
 const styles = StyleSheet.create({
   container: {
+    color: 'white',
     alignItems: 'center',
-    marginRight: 20,
-    padding: 5
+    marginRight: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#000',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    minWidth: 130,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  selectedContainer: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF'
+  },
+  focusedContainer: {
+    borderColor: '#ffffff',
+    transform: [{scale: 1.05}]
+  },
+  imageWrapper: {
+    marginBottom: 8
   },
   image: {
-    width: 150,
-    height: 120,
-    borderRadius: 116,
-    marginBottom: 5
+    width: 60,
+    height: 60,
+    borderRadius: 30
   },
   label: {
-    color: '#fff',
-    fontSize: 15,
-    textAlign: 'center'
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+    textTransform: 'capitalize'
   },
-  focused: {
-    borderWidth: 4,
-    borderColor: 'white'
+  selectedText: {
+    color: '#ffffff',
+    fontWeight: 'bold'
   }
 })

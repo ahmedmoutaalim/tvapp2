@@ -3,7 +3,7 @@ import apiClient from 'utils/apiClient'
 
 export const getFoodData = async () => {
   try {
-    const response = await apiClient.get<IFoodResponseData>('api/food')
+    const response = await apiClient.get<IFoodResponseData>('api/foods')
     if (response.success) {
       return response
     }

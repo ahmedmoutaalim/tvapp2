@@ -85,7 +85,7 @@ const Market = () => {
             <FlatList
               data={categories}
               horizontal
-              keyExtractor={item => item}
+              keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={styles.categoriesList}
               renderItem={({item}) => (
                 <CategoryCard

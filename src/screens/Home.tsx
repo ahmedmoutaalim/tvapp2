@@ -119,6 +119,7 @@ const Home = () => {
   // Check if room number exists in AsyncStorage
   useEffect(() => {
     const checkRoomNumber = async () => {
+      // await AsyncStorage.removeItem('roomNumber')
       const storedRoomNumber = await AsyncStorage.getItem('roomNumber')
       if (storedRoomNumber) {
         setRoomNumber(storedRoomNumber)

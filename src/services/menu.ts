@@ -4,7 +4,7 @@ import apiClient from 'utils/apiClient'
 
 export const getMenuData = async () => {
   try {
-    const response = await apiClient.get<IMenuResponseData>('api/menu')
+    const response = await apiClient.get<IMenuResponseData>('api/menus')
     if (response.success) {
       return response
     }

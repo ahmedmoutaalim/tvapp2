@@ -21,7 +21,7 @@ const ProductCard = ({item}: Props) => {
       onBlur={() => setIsFocused(false)}
       style={[styles.container]}>
       <Image
-        source={require('../../assets/images/products/cat/cat1.jpg')}
+        source={{uri: item.image}} // Fixed - use the actual image URL from data
         style={[styles.image, isFocused && styles.focused]}
       />
       <Text style={styles.title}>{item.title}</Text>

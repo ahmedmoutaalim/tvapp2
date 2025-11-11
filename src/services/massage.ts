@@ -5,7 +5,7 @@ import apiClient from 'utils/apiClient'
 
 export const getMassageData = async () => {
   try {
-    const response = await apiClient.get<IMassageResponseData>('api/massage')
+    const response = await apiClient.get<IMassageResponseData>('api/massages')
     if (response.success) {
       return response
     }

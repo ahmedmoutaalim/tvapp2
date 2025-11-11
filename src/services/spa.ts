@@ -4,7 +4,7 @@ import apiClient from 'utils/apiClient'
 
 export const getSpaData = async () => {
   try {
-    const response = await apiClient.get<ISpaResponseData>('api/spa')
+    const response = await apiClient.get<ISpaResponseData>('api/spas')
     if (response.success) {
       return response
     }
