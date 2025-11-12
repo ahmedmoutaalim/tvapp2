@@ -1,36 +1,55 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  Alert,
-  Modal as RNModal
+  Alert
 } from 'react-native'
 import {useTranslation} from 'react-i18next'
 import {useMutation} from '@tanstack/react-query'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import {useNavigation} from '@react-navigation/native'
 import {getMeData} from '../services/clientTv'
+import {saveClientData} from '../utils/clientStorage'
+import {RootNavigationProp} from '../navigation/types'
 
-interface RoomNumberModalProps {
-  visible: boolean
-  onSuccess: (data: any) => void
-}
-
-const RoomNumberModal = ({visible, onSuccess}: RoomNumberModalProps) => {
+const RoomNumberScreen = () => {
   const {t} = useTranslation()
+  const navigation = useNavigation<RootNavigationProp>()
   const [roomNumber, setRoomNumber] = useState('')
+
+  // Check if room number already exists when component mounts
+  useEffect(() => {
+    checkExistingRoomNumber()
+  }, [])
+
+  const checkExistingRoomNumber = async () => {
+    try {
+      const storedRoomNumber = await AsyncStorage.getItem('roomNumber')
+      if (storedRoomNumber) {
+        // Room number exists, navigate to Home
+        navigation.replace('Main')
+      }
+    } catch (error) {
+      console.error('Error checking room number:', error)
+    }
+  }
 
   const {mutate: fetchClientData, isPending} = useMutation({
     mutationFn: (room: string) => getMeData(room),
     onSuccess: async data => {
       console.log('=================Response Data Client', data)
 
-      // Store room number and data
+      // Store room number and client data
       await AsyncStorage.setItem('roomNumber', roomNumber)
-      await AsyncStorage.setItem('clientTvData', JSON.stringify(data))
-      onSuccess(data)
+      if (data?.client) {
+        await saveClientData(data.client)
+      }
+
+      // Navigate to Main (Home) screen
+      navigation.navigate('Main')
     },
     onError: error => {
       Alert.alert('Error', 'Failed to fetch room data. Please try again.')
@@ -53,32 +72,30 @@ const RoomNumberModal = ({visible, onSuccess}: RoomNumberModalProps) => {
   }
 
   return (
-    <RNModal visible={visible} transparent animationType="fade">
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <View style={styles.content}>
-            <Text style={styles.title}>{t('room_number')}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder={t('enter_room_number')}
-              placeholderTextColor="#999"
-              value={roomNumber}
-              onChangeText={handleChange}
-              keyboardType="numeric"
-              autoFocus
-            />
-            <TouchableOpacity
-              style={[styles.button, isPending && styles.buttonDisabled]}
-              onPress={handleContinue}
-              disabled={isPending}>
-              <Text style={styles.buttonText}>
-                {isPending ? 'Loading...' : t('continue')}
-              </Text>
-            </TouchableOpacity>
-          </View>
+    <View style={styles.overlay}>
+      <View style={styles.modalContainer}>
+        <View style={styles.content}>
+          <Text style={styles.title}>{t('room_number')}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder={t('enter_room_number')}
+            placeholderTextColor="#999"
+            value={roomNumber}
+            onChangeText={handleChange}
+            keyboardType="numeric"
+            autoFocus
+          />
+          <TouchableOpacity
+            style={[styles.button, isPending && styles.buttonDisabled]}
+            onPress={handleContinue}
+            disabled={isPending}>
+            <Text style={styles.buttonText}>
+              {isPending ? 'Loading...' : t('continue')}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </RNModal>
+    </View>
   )
 }
 
@@ -139,5 +156,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export {RoomNumberModal}
-export default RoomNumberModal
+export default RoomNumberScreen

@@ -18,8 +18,13 @@ import {AppNavigationProp} from '../navigation/types'
 import {getMeData} from '../services/clientTv'
 import {useQuery} from '@tanstack/react-query'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import RoomNumberModal from './RoomNumber'
-import {saveClientData} from '../utils/clientStorage'
+import {
+  clearClientData,
+  getClientData,
+  saveClientData
+} from '../utils/clientStorage'
+import LoadingScreen from '../components/LoadingScreen/LoadingScreen'
+import {useCart} from '../context/CartContext'
 
 const cardsData = [
   {
@@ -110,32 +115,74 @@ const CardItem = ({item, onPress}: {item: any; onPress: () => void}) => {
 const Home = () => {
   const {t} = useTranslation()
   const navigation = useNavigation<AppNavigationProp>()
-  const [showModal, setShowModal] = useState(false)
+  const {clearCart} = useCart()
   const [roomNumber, setRoomNumber] = useState<string | null>('')
 
   useEffect(() => {
     console.log('=====roomNumber in Home screen=====', roomNumber)
   }, [roomNumber])
 
-  // Check if room number exists in AsyncStorage
+  // Check if room number exists in AsyncStorage and handle expiration
   useEffect(() => {
+    checkRemoveClientData()
     const checkRoomNumber = async () => {
-      // await AsyncStorage.removeItem('roomNumber')
       const storedRoomNumber = await AsyncStorage.getItem('roomNumber')
       if (storedRoomNumber) {
         setRoomNumber(storedRoomNumber)
       } else {
-        setShowModal(true)
+        // Navigate back to RoomNumber screen if no room number
+        navigation.navigate('RoomNumber')
       }
     }
     checkRoomNumber()
   }, [])
 
+  const checkRemoveClientData = async () => {
+    try {
+      const clientData = await getClientData()
+      if (!clientData) {
+        console.log('No clientData found. Clearing cart and room number...')
+        await clearCart()
+        await AsyncStorage.removeItem('roomNumber')
+        navigation.navigate('RoomNumber')
+        return
+      }
+
+      const {createdAt, days} = clientData
+      console.log('clientData from storage', clientData)
+
+      // Calculate the expiration date
+      const createdDate = new Date(createdAt)
+      const expirationDate = new Date(createdDate)
+      expirationDate.setDate(createdDate.getDate() + days)
+
+      const currentDate = new Date()
+      // Check if the rental period has expired
+      if (currentDate > expirationDate) {
+        console.log('Rental period expired. Clearing client data and cart...')
+        await clearClientData()
+        await clearCart()
+        await AsyncStorage.removeItem('roomNumber')
+        navigation.navigate('RoomNumber')
+      } else {
+        console.log(
+          'Rental period still valid. Days remaining:',
+          Math.ceil(
+            (expirationDate.getTime() - currentDate.getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        )
+      }
+    } catch (error) {
+      console.error('Error checking client data expiration:', error)
+    }
+  }
+
   // Fetch user data using useQuery
   const {data: userData, isLoading} = useQuery({
     queryKey: ['clientTvData', roomNumber],
     queryFn: () => getMeData(roomNumber!),
-    enabled: !!roomNumber // Only run query when roomNumber is available
+    enabled: !!roomNumber
   })
 
   console.log('userData', userData)
@@ -151,53 +198,49 @@ const Home = () => {
     }
   }, [userData])
 
-  const handleModalSuccess = (data: any) => {
-    setRoomNumber(data?.roomNumber || '')
-    setShowModal(false)
+  if (isLoading) {
+    return <LoadingScreen />
   }
 
   return (
-    <>
-      <RoomNumberModal visible={showModal} onSuccess={handleModalSuccess} />
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 20}}
-        showsVerticalScrollIndicator={false}>
-        <View style={styles.headerRow}>
-          <View style={styles.leftSide}>
-            <Text style={styles.welcomeText}>
-              {' '}
-              {t('welcome', {name: userName})}
-            </Text>
-            <TouchableOpacity style={styles.button}>
-              <View style={styles.iconContainer}>
-                <Icon name="play" size={14} color="#fff" />
-              </View>
-              <Text style={styles.buttonText}>{t('discover_us')}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <FlatList
-            data={cardsData}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={item => item.title}
-            contentContainerStyle={styles.cardsContainer}
-            style={{
-              width: VISIBLE_CARDS * (CARD_WIDTH + CARD_MARGIN) - CARD_MARGIN
-            }}
-            renderItem={({item}) => (
-              <CardItem
-                item={item}
-                onPress={() => navigation.navigate(item.link as never)}
-              />
-            )}
-          />
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 20}}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.headerRow}>
+        <View style={styles.leftSide}>
+          <Text style={styles.welcomeText}>
+            {' '}
+            {t('welcome', {name: userName})}
+          </Text>
+          <TouchableOpacity style={styles.button}>
+            <View style={styles.iconContainer}>
+              <Icon name="play" size={14} color="#fff" />
+            </View>
+            <Text style={styles.buttonText}>{t('discover_us')}</Text>
+          </TouchableOpacity>
         </View>
 
-        <AppsList />
-      </ScrollView>
-    </>
+        <FlatList
+          data={cardsData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={item => item.title}
+          contentContainerStyle={styles.cardsContainer}
+          style={{
+            width: VISIBLE_CARDS * (CARD_WIDTH + CARD_MARGIN) - CARD_MARGIN
+          }}
+          renderItem={({item}) => (
+            <CardItem
+              item={item}
+              onPress={() => navigation.navigate(item.link as never)}
+            />
+          )}
+        />
+      </View>
+
+      <AppsList />
+    </ScrollView>
   )
 }
 

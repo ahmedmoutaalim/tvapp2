@@ -116,7 +116,9 @@ const Cart = () => {
       <View style={styles.header}>
         <HeadTitle
           title="Votre panier"
-          description={`Vous avez ${totalItems} produit${totalItems !== 1 ? 's' : ''} - Total: ${cart.totalPrice.toFixed(2)} MAD`}
+          description={`Vous avez ${totalItems} produit${
+            totalItems !== 1 ? 's' : ''
+          } - Total: ${cart.totalPrice.toFixed(2)} MAD`}
         />
         <View style={styles.headerActions}>
           <TouchableOpacity
@@ -152,11 +154,20 @@ const Cart = () => {
                     updateQuantity(item.id, item.quantity - 1)
                   }
                   onDelete={() => {
-                    console.log('🔴 Delete button clicked for item:', item.id, item.title)
+                    console.log(
+                      '🔴 Delete button clicked for item:',
+                      item.id,
+                      item.title
+                    )
                     setSelectedItemId(item.id)
                     setAction('delete')
                     setVisible(true)
-                    console.log('🔴 Modal should open now. Action:', 'delete', 'Visible:', true)
+                    console.log(
+                      '🔴 Modal should open now. Action:',
+                      'delete',
+                      'Visible:',
+                      true
+                    )
                   }}
                 />
               </View>
@@ -207,7 +218,9 @@ const Cart = () => {
         <Text style={{color: 'white', textAlign: 'center'}}>
           {action === 'delete'
             ? 'Êtes-vous sûr de vouloir supprimer ce produit?'
-            : `Confirmer la commande de ${cart.totalItems} produit${cart.totalItems !== 1 ? 's' : ''} pour ${cart.totalPrice.toFixed(2)} MAD?`}
+            : `Confirmer la commande de ${cart.totalItems} produit${
+                cart.totalItems !== 1 ? 's' : ''
+              } pour ${cart.totalPrice.toFixed(2)} MAD?`}
         </Text>
       </Modal>
     </View>

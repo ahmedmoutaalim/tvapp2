@@ -56,11 +56,20 @@ const RootNavigator = () => {
             <Sidebar />
 
             <Stack.Navigator
+              initialRouteName={hasRoomNumber ? 'Main' : 'RoomNumber'}
               screenOptions={{
                 headerShown: false,
                 contentStyle: {backgroundColor: 'transparent'},
                 animation: 'slide_from_right'
               }}>
+              <Stack.Screen
+                name="RoomNumber"
+                component={RoomNumber}
+                options={{
+                  animation: 'fade',
+                  gestureEnabled: false
+                }}
+              />
               <Stack.Screen name="Main" component={BottomTabNavigator} />
               <Stack.Screen
                 name="Cart"
