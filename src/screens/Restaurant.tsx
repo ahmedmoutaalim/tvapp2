@@ -1,91 +1,131 @@
-import React, {useState} from 'react'
-import {StyleSheet, Text, View, FlatList, ScrollView} from 'react-native'
+import React, {useState, useEffect} from 'react'
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity
+} from 'react-native'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
 import {useTranslation} from 'react-i18next'
 import RestaurantCard from '../components/RestaurantCard/RestaurantCard'
+import {useQuery} from '@tanstack/react-query'
+import {getMenuData} from '../services/menu'
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from 'react-native-responsive-screen'
+import {RFValue} from 'react-native-responsive-fontsize'
 
-const data = {
-  offer_of_the_day: [
-    {
-      id: 1,
-      title: 'Pizza Margherita',
-      price: 12.99,
-      image: require('../assets/food1.jpg'),
-      description: 'Classic pizza with fresh tomatoes, mozzarella, and basil.'
-    },
-    {
-      id: 2,
-      title: 'Caesar Salad',
-      price: 8.99,
-      image: require('../assets/food2.jpg'),
-      description: 'Crisp romaine lettuce with Caesar dressing, croutons.'
-    },
-    {
-      id: 3,
-      title: 'Pizza Margherita',
-      price: 12.99,
-      image: require('../assets/food1.jpg'),
-      description: 'Classic pizza with fresh tomatoes, mozzarella, and basil.'
-    },
-    {
-      id: 4,
-      title: 'Caesar Salad',
-      price: 8.99,
-      image: require('../assets/food2.jpg'),
-      description: 'Crisp romaine lettuce with Caesar dressing, croutons.'
-    }
-  ],
-  breakfast: [
-    {
-      id: 3,
-      title: 'Continental Breakfast',
-      price: 5.99,
-      image: require('../assets/food1.jpg'),
-      description: 'A selection of pastries, fruits, and coffee.'
-    },
-    {
-      id: 4,
-      title: 'Full English Breakfast',
-      price: 10.99,
-      image: require('../assets/food2.jpg'),
-      description: 'Eggs, bacon, sausages, beans, and toast.'
-    }
-  ],
-  dinner: [
-    {
-      id: 5,
-      title: 'Grilled Salmon',
-      price: 15.99,
-      image: require('../assets/food1.jpg'),
-      description: 'Fresh salmon fillet grilled to perfection.'
-    },
-    {
-      id: 6,
-      title: 'Steak and Fries',
-      price: 18.99,
-      image: require('../assets/food2.jpg'),
-      description: 'Juicy steak served with crispy fries.'
-    }
-  ],
-  dessert: [
-    {
-      id: 7,
-      title: 'Chocolate Cake',
-      price: 6.99,
-      image: require('../assets/food1.jpg'),
-      description: 'Rich chocolate cake with a creamy frosting.'
-    },
-    {
-      id: 8,
-      title: 'Fruit Tart',
-      price: 5.99,
-      image: require('../assets/food2.jpg'),
-      description: 'Delicious tart filled with seasonal fruits.'
-    }
-  ]
-}
 const Restaurant = () => {
   const {t} = useTranslation()
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [categories, setCategories] = useState<
+    Array<{id: string; name: string}>
+  >([])
+  const [groupedMenuItems, setGroupedMenuItems] = useState<{
+    [key: string]: any[]
+  }>({})
+
+  const {data, isLoading, error} = useQuery({
+    queryKey: ['MENU'],
+    queryFn: getMenuData
+  })
+
+  console.log('🍽️ Restaurant Query State:', {
+    isLoading,
+    hasError: !!error,
+    hasData: !!data,
+    dataKeys: data ? Object.keys(data) : []
+  })
+
+  if (error) {
+    console.error('❌ Restaurant Query Error:', {
+      message: (error as Error).message,
+      name: (error as Error).name,
+      fullError: JSON.stringify(error, null, 2)
+    })
+  }
+
+  // Extract unique categories and group menu items by category
+  useEffect(() => {
+    if (data?.menuItems) {
+      // Extract unique categories
+      const uniqueCategories = data.menuItems.reduce(
+        (acc: Array<{id: string; name: string}>, item: any) => {
+          const categoryExists = acc.find(cat => cat.id === item.category._id)
+          if (!categoryExists && item.category) {
+            acc.push({
+              id: item.category._id,
+              name: item.category.name
+            })
+          }
+          return acc
+        },
+        []
+      )
+      setCategories(uniqueCategories)
+
+      // Group menu items by category
+      const grouped = data.menuItems.reduce(
+        (acc: {[key: string]: any[]}, item: any) => {
+          const categoryId = item.category._id
+          if (!acc[categoryId]) {
+            acc[categoryId] = []
+          }
+          acc[categoryId].push(item)
+          return acc
+        },
+        {}
+      )
+      setGroupedMenuItems(grouped)
+    }
+  }, [data])
+
+  const handleCategoryPress = (categoryId: string) => {
+    if (selectedCategory === categoryId) {
+      setSelectedCategory(null)
+    } else {
+      setSelectedCategory(categoryId)
+    }
+  }
+
+  // Get categories to display based on selection
+  const displayCategories = selectedCategory
+    ? categories.filter(cat => cat.id === selectedCategory)
+    : categories
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <HeadTitle
+          title={t('restaurant_service')}
+          description={t('restaurant_description')}
+        />
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <HeadTitle
+          title={t('restaurant_service')}
+          description={t('restaurant_description')}
+        />
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>
+            Error loading menu data. Please try again.
+          </Text>
+        </View>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -94,43 +134,61 @@ const Restaurant = () => {
         description={t('restaurant_description')}
       />
 
-      <ScrollView>
-        <Text style={styles.sectionTitle}>{t('offer_of_the_day')}</Text>
+      {/* Category Filter Buttons */}
+      {categories.length > 0 && (
+        <View style={styles.categoryFilterContainer}>
+          <FlatList
+            data={categories}
+            keyExtractor={item => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryFilterList}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() => handleCategoryPress(item.id)}
+                style={[
+                  styles.categoryButton,
+                  selectedCategory === item.id && styles.categoryButtonActive
+                ]}>
+                <Text
+                  style={[
+                    styles.categoryButtonText,
+                    selectedCategory === item.id &&
+                      styles.categoryButtonTextActive
+                  ]}>
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
 
-        <FlatList
-          data={data.offer_of_the_day}
-          horizontal
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <RestaurantCard item={item} />}
-        />
-
-        <Text style={styles.sectionTitle}>{t('breakfast')}</Text>
-        <FlatList
-          data={data.breakfast}
-          keyExtractor={item => item.id.toString()}
-          horizontal
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <RestaurantCard item={item} />}
-        />
-
-        <Text style={styles.sectionTitle}>{t('dinner')}</Text>
-        <FlatList
-          data={data.dinner}
-          keyExtractor={item => item.id.toString()}
-          horizontal
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <RestaurantCard item={item} />}
-        />
-
-        <Text style={styles.sectionTitle}>{t('dessert')}</Text>
-        <FlatList
-          data={data.dessert}
-          keyExtractor={item => item.id.toString()}
-          horizontal
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <RestaurantCard item={item} />}
-        />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {displayCategories.length > 0 ? (
+          displayCategories.map(category => (
+            <View key={category.id}>
+              <Text style={styles.sectionTitle}>{category.name}</Text>
+              <FlatList
+                data={groupedMenuItems[category.id] || []}
+                horizontal
+                keyExtractor={item => item._id}
+                contentContainerStyle={styles.productsList}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({item}) => <RestaurantCard item={item} />}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>
+                    No items in this category
+                  </Text>
+                }
+              />
+            </View>
+          ))
+        ) : (
+          <View style={styles.centerContainer}>
+            <Text style={styles.emptyText}>No menu items available</Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   )
@@ -144,11 +202,58 @@ const styles = StyleSheet.create({
     padding: 20
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: RFValue(14),
     color: '#fff',
-    marginBottom: 8
+    fontWeight: 'bold',
+    marginBottom: 8,
+    marginTop: hp(1)
   },
   productsList: {
     paddingVertical: 20
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: hp(5)
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: RFValue(14),
+    textAlign: 'center'
+  },
+  emptyText: {
+    color: '#999',
+    fontSize: RFValue(12),
+    textAlign: 'center',
+    padding: wp(5)
+  },
+  categoryFilterContainer: {
+    marginVertical: hp(1)
+  },
+  categoryFilterList: {
+    paddingVertical: hp(1)
+  },
+  categoryButton: {
+    paddingHorizontal: wp(4),
+    paddingVertical: hp(1),
+    borderRadius: wp(6),
+    backgroundColor: '#333',
+    marginRight: wp(2),
+    borderWidth: 1,
+    borderColor: '#444'
+  },
+  categoryButtonActive: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF'
+  },
+  categoryButtonText: {
+    color: '#999',
+    fontSize: RFValue(12),
+    fontWeight: '500'
+  },
+  categoryButtonTextActive: {
+    color: '#fff',
+    fontWeight: '600'
   }
 })

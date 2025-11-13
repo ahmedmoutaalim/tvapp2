@@ -77,26 +77,37 @@ const Cart = () => {
 
       if (!clientId) {
         Alert.alert('Error', 'Client information not found')
+        setIsOrdering(false)
         return
       }
 
-      const orderData = {
-        client_id: clientId,
-        items: cart.items.map(item => ({
-          product_id: item.product_id,
-          type: item.type,
-          quantity: item.quantity,
-          price: item.price
-        })),
-        total: cart.totalPrice
-      }
+      console.log('📦 Starting order submission...')
+      console.log('📦 Cart items:', cart.items.length)
+      console.log('📦 Client ID:', clientId)
 
-      await createOrder(orderData)
+      // Send each item as a separate order to the API
+      const orderPromises = cart.items.map(item => {
+        const orderData = {
+          client_id: clientId,
+          product_id: item.product_id,
+          price: item.price,
+          quantity: item.quantity,
+          type: item.type
+        }
+        console.log('📦 Sending order:', orderData)
+        return createOrder(orderData)
+      })
+
+      const responses = await Promise.all(orderPromises)
+
+      console.log('✅ All orders submitted successfully')
+      console.log('📊 Order responses:', JSON.stringify(responses, null, 2))
+
       await clearCart()
       setVisible(false)
       Alert.alert('Success', 'Your order has been placed successfully!')
     } catch (error) {
-      console.error('Error placing order:', error)
+      console.error('❌ Error placing order:', error)
       Alert.alert('Error', 'Failed to place order. Please try again.')
     } finally {
       setIsOrdering(false)

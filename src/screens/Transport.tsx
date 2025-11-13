@@ -7,7 +7,7 @@ import {
   View,
   ActivityIndicator
 } from 'react-native'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 
 import Icon from 'react-native-vector-icons/Feather'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
@@ -25,38 +25,48 @@ import TransportCard from '../components/Trips/TransportCard'
 import {useQuery} from '@tanstack/react-query'
 import {getTransportData} from '../services/transport'
 
-const filterOptions = [
-  {
-    id: 1,
-    title: 'private',
-    icon: <FAIcon name="star" size={RFValue(18)} color="#fff" />
-  },
-  {
-    id: 2,
-    title: 'Airport',
-    icon: <FAIcon name="compass" size={RFValue(18)} color="#fff" />
-  },
-  {
-    id: 3,
-    title: 'collective_transport_system',
-    icon: <FAIcon name="star" size={RFValue(18)} color="#fff" />
-  },
-  {
-    id: 4,
-    title: 'taxi_and_shuttles',
-    icon: <FAIcon name="book-open" size={RFValue(18)} color="#fff" />
-  }
-]
-
 const Transport = () => {
   const {t} = useTranslation()
   const navigation = useNavigation()
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [categories, setCategories] = useState<
+    Array<{id: string; name: string}>
+  >([])
 
   const {data, isLoading, error} = useQuery({
     queryKey: ['transport', currentPage],
     queryFn: () => getTransportData({page: currentPage, limit: 10})
   })
+
+  // Extract unique categories from transport data
+  useEffect(() => {
+    if (data?.transports) {
+      const uniqueCategories = data.transports.reduce(
+        (acc: Array<{id: string; name: string}>, transport: any) => {
+          const categoryExists = acc.find(
+            cat => cat.id === transport.category._id
+          )
+          if (!categoryExists && transport.category) {
+            acc.push({
+              id: transport.category._id,
+              name: transport.category.name
+            })
+          }
+          return acc
+        },
+        []
+      )
+      setCategories(uniqueCategories)
+    }
+  }, [data])
+
+  // Filter transports by selected category
+  const filteredTransports = selectedCategory
+    ? data?.transports?.filter(
+        transport => transport.category._id === selectedCategory
+      )
+    : data?.transports
 
   const handleNextPage = () => {
     if (data && currentPage < data.totalPages) {
@@ -67,6 +77,15 @@ const Transport = () => {
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(prev => prev - 1)
+    }
+  }
+
+  const handleCategoryPress = (categoryId: string) => {
+    if (selectedCategory === categoryId) {
+      // Deselect if clicking the same category
+      setSelectedCategory(null)
+    } else {
+      setSelectedCategory(categoryId)
     }
   }
 
@@ -106,22 +125,36 @@ const Transport = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Category Filter Buttons */}
       <View style={{paddingHorizontal: wp(3)}}>
         <FlatList
-          data={filterOptions}
-          keyExtractor={item => item.id.toString()}
+          data={categories}
+          keyExtractor={item => item.id}
           horizontal
           contentContainerStyle={{paddingVertical: hp(1)}}
+          showsHorizontalScrollIndicator={false}
           renderItem={({item}) => (
-            <Button
-              variant="outline"
-              title={t(item.title)}
-              icon={item.icon}
-              style={{
-                marginRight: wp(2)
-              }}
-            />
+            <TouchableOpacity
+              onPress={() => handleCategoryPress(item.id)}
+              style={[
+                styles.categoryButton,
+                selectedCategory === item.id && styles.categoryButtonActive
+              ]}>
+              <Text
+                style={[
+                  styles.categoryButtonText,
+                  selectedCategory === item.id &&
+                    styles.categoryButtonTextActive
+                ]}>
+                {item.name}
+              </Text>
+            </TouchableOpacity>
           )}
+          ListEmptyComponent={
+            !isLoading ? (
+              <Text style={styles.emptyText}>No categories available</Text>
+            ) : null
+          }
         />
       </View>
 
@@ -134,13 +167,19 @@ const Transport = () => {
           <>
             <View>
               <Text style={styles.sectionTitle}>
-                {t('recommended_transport')}
+                {selectedCategory
+                  ? `${
+                      categories.find(cat => cat.id === selectedCategory)
+                        ?.name || 'Filtered'
+                    } Transport`
+                  : t('recommended_transport')}
               </Text>
               <FlatList
-                data={data?.transports || []}
+                data={filteredTransports || []}
                 keyExtractor={item => item._id}
                 horizontal
                 contentContainerStyle={{paddingLeft: wp(5)}}
+                showsHorizontalScrollIndicator={false}
                 renderItem={({item}) => (
                   <TransportCard
                     onPress={() =>
@@ -155,7 +194,9 @@ const Transport = () => {
                 )}
                 ListEmptyComponent={
                   <Text style={styles.emptyText}>
-                    No transport options available
+                    {selectedCategory
+                      ? 'No transport options in this category'
+                      : 'No transport options available'}
                   </Text>
                 }
               />
@@ -281,5 +322,27 @@ const styles = StyleSheet.create({
   paginationText: {
     color: '#fff',
     fontSize: RFValue(12)
+  },
+  categoryButton: {
+    paddingHorizontal: wp(4),
+    paddingVertical: hp(1),
+    borderRadius: wp(6),
+    backgroundColor: '#000',
+    marginRight: wp(2),
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  categoryButtonActive: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF'
+  },
+  categoryButtonText: {
+    color: 'white',
+    fontSize: RFValue(12),
+    fontWeight: '500'
+  },
+  categoryButtonTextActive: {
+    color: '#fff',
+    fontWeight: '600'
   }
 })

@@ -56,7 +56,7 @@ const RootNavigator = () => {
             <Sidebar />
 
             <Stack.Navigator
-              initialRouteName={hasRoomNumber ? 'Main' : 'RoomNumber'}
+              initialRouteName={!hasRoomNumber ? 'RoomNumber' : 'Main'}
               screenOptions={{
                 headerShown: false,
                 contentStyle: {backgroundColor: 'transparent'},

@@ -1,24 +1,22 @@
-import {
-  StyleSheet,
-  Text,
-  Image,
-  Pressable,
-  View,
-  ImageSourcePropType
-} from 'react-native'
+import {StyleSheet, Text, Image, Pressable, View} from 'react-native'
 import React, {useState} from 'react'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp
 } from 'react-native-responsive-screen'
 import {RFValue} from 'react-native-responsive-fontsize'
+import Icon from 'react-native-vector-icons/Feather'
 
 interface Product {
-  id: number
+  _id: string
   title: string
   price: number
-  image: ImageSourcePropType
+  image: string
   description?: string
+  category: {
+    _id: string
+    name: string
+  }
 }
 
 interface Props {
@@ -27,17 +25,33 @@ interface Props {
 
 const RestaurantCard = ({item}: Props) => {
   const [isFocused, setIsFocused] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   return (
     <Pressable
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       style={[styles.container, isFocused && styles.focused]}>
-      <Image source={item.image} style={styles.image} resizeMode="cover" />
+      {!imageError ? (
+        <Image
+          source={{uri: item.image}}
+          style={styles.image}
+          resizeMode="cover"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <View style={[styles.image, styles.imagePlaceholder]}>
+          <Icon name="image" size={50} color="#666" />
+        </View>
+      )}
       <View style={styles.content}>
-        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.title} numberOfLines={2}>
+          {item.title}
+        </Text>
         {item.description ? (
-          <Text style={styles.description}>{item.description}</Text>
+          <Text style={styles.description} numberOfLines={2}>
+            {item.description}
+          </Text>
         ) : null}
         <Text style={styles.price}>{item.price} MAD</Text>
       </View>
@@ -61,7 +75,13 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: hp('22%')
+    height: hp('22%'),
+    backgroundColor: '#1a1a1a'
+  },
+  imagePlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2a2a2a'
   },
   content: {
     padding: wp('0.8%'),
@@ -73,13 +93,15 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   description: {
-    color: 'white',
-    fontSize: RFValue(9)
+    color: '#ccc',
+    fontSize: RFValue(9),
+    marginTop: 4
   },
   price: {
     color: 'white',
     fontSize: RFValue(12),
-    fontWeight: '500'
+    fontWeight: '500',
+    marginTop: 4
   },
   focused: {
     borderColor: 'white'
