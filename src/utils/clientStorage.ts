@@ -34,7 +34,7 @@ export const getClientId = async (): Promise<string | null> => {
     const clientData = await getClientData()
     // Use _id if available, otherwise use roomNumber as fallback
     if (clientData) {
-      const id = clientData._id || clientData.roomNumber
+      const id = clientData.id || clientData.roomNumber
       console.log('📌 Client ID retrieved:', id)
       return id
     }

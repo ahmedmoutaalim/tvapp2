@@ -3,7 +3,6 @@ import apiClient from '../utils/apiClient'
 export interface CreateOrderData {
   client_id: string
   product_id: string
-  price: number
   quantity: number
   type: string
 }

@@ -32,10 +32,7 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({
 
   // Calculate totals whenever items change
   useEffect(() => {
-    const totalItems = cart.items.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    )
+    const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0)
     const totalPrice = cart.items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
@@ -73,7 +70,8 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({
   const addToCart = async (params: AddToCartParams) => {
     try {
       const existingItemIndex = cart.items.findIndex(
-        item => item.product_id === params.product_id && item.type === params.type
+        item =>
+          item.product_id === params.product_id && item.type === params.type
       )
 
       let updatedItems: CartItem[]
@@ -129,7 +127,10 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({
       console.log('🗑️ [CartContext] Current cart items:', cart.items.length)
 
       const itemToRemove = cart.items.find(item => item.id === itemId)
-      console.log('🗑️ [CartContext] Item to remove:', itemToRemove?.title || 'NOT FOUND')
+      console.log(
+        '🗑️ [CartContext] Item to remove:',
+        itemToRemove?.title || 'NOT FOUND'
+      )
 
       const updatedItems = cart.items.filter(item => item.id !== itemId)
       console.log('🗑️ [CartContext] Updated items count:', updatedItems.length)

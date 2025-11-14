@@ -7,7 +7,8 @@ import {
   FlatList,
   ScrollView,
   Platform,
-  Image
+  Image,
+  Alert
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import LinearGradient from 'react-native-linear-gradient'
@@ -185,7 +186,7 @@ const Home = () => {
     enabled: !!roomNumber
   })
 
-  console.log('userData', userData)
+  console.log('userData______:', userData)
 
   const userName = userData?.client?.name
 

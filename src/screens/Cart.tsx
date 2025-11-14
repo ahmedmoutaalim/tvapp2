@@ -8,6 +8,7 @@ import {
   Alert
 } from 'react-native'
 import React, {useState} from 'react'
+import {useNavigation} from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/Feather'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
 import CartProduct from '../components/Cart/CartProduct'
@@ -17,6 +18,7 @@ import {useCart} from '../context/CartContext'
 import {createOrder} from '../services/order'
 
 const Cart = () => {
+  const navigation = useNavigation()
   const {cart, removeFromCart, updateQuantity, clearCart, isLoading} = useCart()
   const [visible, setVisible] = useState(false)
   const [action, setAction] = useState<'delete' | 'order' | null>(null)
@@ -125,12 +127,19 @@ const Cart = () => {
   return (
     <View style={{flex: 1}}>
       <View style={styles.header}>
-        <HeadTitle
-          title="Votre panier"
-          description={`Vous avez ${totalItems} produit${
-            totalItems !== 1 ? 's' : ''
-          } - Total: ${cart.totalPrice.toFixed(2)} MAD`}
-        />
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={22} color="#fff" />
+          </TouchableOpacity>
+          <HeadTitle
+            title="Votre panier"
+            description={`Vous avez ${totalItems} produit${
+              totalItems !== 1 ? 's' : ''
+            } - Total: ${cart.totalPrice.toFixed(2)} MAD`}
+          />
+        </View>
         <View style={styles.headerActions}>
           <TouchableOpacity
             style={styles.deleteButton}
@@ -251,7 +260,22 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 50
+    paddingHorizontal: 50,
+    alignItems: 'center'
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15
+  },
+  backButton: {
+    padding: 10,
+    backgroundColor: '#D9D9D980',
+    borderRadius: 100,
+    height: 45,
+    width: 45,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   headerActions: {
     flexDirection: 'row',

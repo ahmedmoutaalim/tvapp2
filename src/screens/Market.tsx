@@ -89,7 +89,9 @@ const Market = () => {
 
   const handleAddToCart = async (product: any) => {
     if (!clientId) {
-      console.error('❌ Client ID not available. Please go to Home screen first.')
+      console.error(
+        '❌ Client ID not available. Please go to Home screen first.'
+      )
       Alert.alert(
         'Profile Required',
         'Please visit the Home screen first to load your profile.',
