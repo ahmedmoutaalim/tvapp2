@@ -1,135 +1,155 @@
 import React, {useState} from 'react'
-import {StyleSheet, Text, View, FlatList, ScrollView} from 'react-native'
-import {categories, products} from '../data/products'
-import ProductCard from '../components/ProductCard/ProductCard'
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator
+} from 'react-native'
+import {useQuery} from '@tanstack/react-query'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
 import {useTranslation} from 'react-i18next'
-import RestaurantCard from '../components/RestaurantCard/RestaurantCard'
+import FoodCard from '../components/Food/FoodCard'
+import {getFoodData} from '../services/food'
 
-const data = {
-  tacos: [
-    {
-      id: 1,
-      title: 'Tacos',
-      price: 12.99,
-      image: require('../assets/tacos.jpg'),
-      description: 'Classic pizza with fresh tomatoes, mozzarella, and basil.'
-    },
-    {
-      id: 2,
-      title: 'Caesar Salad',
-      price: 8.99,
-      image: require('../assets/salad.jpg'),
-      description: 'Crisp romaine lettuce with Caesar dressing, croutons.'
-    },
-    {
-      id: 3,
-      title: 'Pizza Margherita',
-      price: 12.99,
-      image: require('../assets/salad.jpg'),
-      description: 'Classic pizza with fresh tomatoes, mozzarella, and basil.'
-    },
-    {
-      id: 4,
-      title: 'Caesar Salad',
-      price: 8.99,
-      image: require('../assets/tacos.jpg'),
-      description: 'Crisp romaine lettuce with Caesar dressing, croutons.'
-    }
-  ],
-  Pizzas: [
-    {
-      id: 3,
-      title: 'Pizza',
-      price: 5.99,
-      image: require('../assets/salad.jpg'),
-      description: 'A selection of pastries, fruits, and coffee.'
-    },
-    {
-      id: 4,
-      title: 'Pizza',
-      price: 10.99,
-      image: require('../assets/tacos.jpg'),
-      description: 'Eggs, bacon, sausages, beans, and toast.'
-    }
-  ],
-  sandwish: [
-    {
-      id: 5,
-      title: 'sandwish',
-      price: 15.99,
-      image: require('../assets/tacos.jpg'),
-      description: 'Fresh salmon fillet grilled to perfection.'
-    },
-    {
-      id: 6,
-      title: 'sandwish',
-      price: 18.99,
-      image: require('../assets/salad.jpg'),
-      description: 'Juicy steak served with crispy fries.'
-    }
-  ],
-  accompagnements: [
-    {
-      id: 7,
-      title: 'accompagnement Cake',
-      price: 6.99,
-      image: require('../assets/tacos.jpg'),
-      description: 'Rich chocolate cake with a creamy frosting.'
-    },
-    {
-      id: 8,
-      title: 'Fruit Tart',
-      price: 5.99,
-      image: require('../assets/food2.jpg'),
-      description: 'Delicious tart filled with seasonal fruits.'
-    }
-  ]
-}
 const Food = () => {
   const {t} = useTranslation()
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+
+  // Fetch food data using useQuery
+  const {data, isLoading, error} = useQuery({
+    queryKey: ['foodData'],
+    queryFn: getFoodData
+  })
+
+  console.log('Full API Response:', data)
+
+  // Extract unique categories from the food items
+  const categories = React.useMemo(() => {
+    // Check different possible response structures
+    const foodItems = data?.foodItems || []
+
+    console.log('Food Items:', foodItems)
+
+    if (!foodItems || foodItems.length === 0) return []
+
+    const uniqueCategories = new Map()
+    foodItems.forEach((item: any) => {
+      if (item.category && !uniqueCategories.has(item.category._id)) {
+        uniqueCategories.set(item.category._id, item.category)
+      }
+    })
+
+    return Array.from(uniqueCategories.values())
+  }, [data])
+
+  console.log('Categories:', categories)
+
+  // Filter products by selected category
+  const filteredProducts = React.useMemo(() => {
+    // Check different possible response structures
+    const foodItems = data?.foodItems || data?.foodItems || []
+
+    if (!foodItems || foodItems.length === 0) return []
+
+    if (!selectedCategory) {
+      return foodItems
+    }
+
+    return foodItems.filter(
+      (item: any) => item.category._id === selectedCategory
+    )
+  }, [data, selectedCategory])
+
+  console.log('Filtered Products:', filteredProducts)
+
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={styles.loadingText}>{t('loading') || 'Loading...'}</Text>
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>
+          {t('error_loading_food') || 'Error loading food items'}
+        </Text>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
       <HeadTitle title={t('food')} description={t('food_description')} />
 
-      <ScrollView>
-        <Text style={styles.sectionTitle}>{t('tacos')}</Text>
-
-        <FlatList
-          data={data.tacos}
+      {/* Categories Filter Buttons */}
+      <View style={styles.categoriesContainer}>
+        <ScrollView
           horizontal
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <RestaurantCard item={item} />}
-        />
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesScroll}>
+          {/* All Categories Button */}
+          <TouchableOpacity
+            style={[
+              styles.categoryButton,
+              !selectedCategory && styles.categoryButtonActive
+            ]}
+            onPress={() => setSelectedCategory(null)}>
+            <Text
+              style={[
+                styles.categoryButtonText,
+                !selectedCategory && styles.categoryButtonTextActive
+              ]}>
+              {t('all') || 'All'}
+            </Text>
+          </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>{t('Pizzas')}</Text>
-        <FlatList
-          data={data.Pizzas}
-          keyExtractor={item => item.id.toString()}
-          horizontal
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <RestaurantCard item={item} />}
-        />
+          {/* Individual Category Buttons */}
+          {categories.map(category => (
+            <TouchableOpacity
+              key={category._id}
+              style={[
+                styles.categoryButton,
+                selectedCategory === category._id && styles.categoryButtonActive
+              ]}
+              onPress={() => setSelectedCategory(category._id)}>
+              <Text
+                style={[
+                  styles.categoryButtonText,
+                  selectedCategory === category._id &&
+                    styles.categoryButtonTextActive
+                ]}>
+                {category.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
-        <Text style={styles.sectionTitle}>{t('sandwish')}</Text>
-        <FlatList
-          data={data.sandwish}
-          keyExtractor={item => item.id.toString()}
-          horizontal
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <RestaurantCard item={item} />}
-        />
-
-        <Text style={styles.sectionTitle}>{t('accompagnements')}</Text>
-        <FlatList
-          data={data.accompagnements}
-          keyExtractor={item => item.id.toString()}
-          horizontal
-          contentContainerStyle={styles.productsList}
-          renderItem={({item}) => <RestaurantCard item={item} />}
-        />
+      {/* Products List */}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {filteredProducts.length > 0 ? (
+          <FlatList
+            data={filteredProducts}
+            keyExtractor={item => item._id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.productsList}
+            renderItem={({item}) => <FoodCard item={item} />}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              {t('no_products_found') || 'No products found'}
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   )
@@ -142,12 +162,60 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20
   },
-  sectionTitle: {
-    fontSize: 16,
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
+  loadingText: {
     color: '#fff',
-    marginBottom: 8
+    marginTop: 10,
+    fontSize: 16
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  categoriesContainer: {
+    marginBottom: 20
+  },
+  categoriesScroll: {
+    paddingVertical: 10
+  },
+  categoryButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)'
+  },
+  categoryButtonActive: {
+    backgroundColor: '#fff',
+    borderColor: '#fff'
+  },
+  categoryButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    textTransform: 'capitalize'
+  },
+  categoryButtonTextActive: {
+    color: '#000'
   },
   productsList: {
     paddingVertical: 20
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40
+  },
+  emptyText: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 16
   }
 })
