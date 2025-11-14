@@ -238,17 +238,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(4),
     paddingVertical: hp(1),
     borderRadius: wp(6),
-    backgroundColor: '#333',
+    backgroundColor: '#000',
     marginRight: wp(2),
     borderWidth: 1,
-    borderColor: '#444'
+    borderColor: '#000'
   },
   categoryButtonActive: {
     backgroundColor: '#007AFF',
     borderColor: '#007AFF'
   },
   categoryButtonText: {
-    color: '#999',
+    color: '#fff',
     fontSize: RFValue(12),
     fontWeight: '500'
   },

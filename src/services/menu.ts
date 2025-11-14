@@ -6,19 +6,8 @@ export const getMenuData = async (): Promise<IMenuResponseData> => {
     console.log('📤 Fetching menu data from api/menus...')
     const response = await apiClient.get<IMenuResponseData>('api/menus')
 
-    console.log('✅ Menu API Response:', {
-      success: response.success,
-      message: response.message,
-      itemsCount: response.menuItems?.length || 0
-    })
-
-    if (response.success) {
-      return response
-    } else {
-      // If response is not successful, throw an error
-      console.error('❌ Menu API returned unsuccessful response:', response)
-      throw new Error(response.message || 'Failed to fetch menu data')
-    }
+    console.log('✅ Menu API Response:', response)
+    return response
   } catch (error: any) {
     console.error('❌ Error fetching menu data:', {
       message: error.message,
