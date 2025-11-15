@@ -4,94 +4,93 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ActivityIndicator
 } from 'react-native'
-import React from 'react'
-
+import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/Feather'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
-import FAIcon from 'react-native-vector-icons/FontAwesome'
 import Button from '../components/Button/Button'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp
 } from 'react-native-responsive-screen'
 import {RFValue} from 'react-native-responsive-fontsize'
-import {useNavigation} from '@react-navigation/native'
 import {useTranslation} from 'react-i18next'
-import TransportCard from '../components/Trips/TransportCard'
-import {transport} from '../data/transport'
-import SpaCard from '../components/SpaCard/SpaCard'
+import {useQuery} from '@tanstack/react-query'
+import {getMassageData} from '../services/massage'
+import MassageCard from '../components/Massage/MassageCard'
 
-const filterOptions = [
-  {
-    id: 1,
-    title: 'Massage relaxant'
-  },
-  {
-    id: 2,
-    title: 'Massage suédois'
-  },
-  {
-    id: 3,
-    title: 'Massage tonique'
-  },
-  {
-    id: 4,
-    title: 'Massage oriental'
-  },
-  {
-    id: 5,
-    title: 'Massage aux huiles essentielles'
-  }
-]
-
-const data = [
-  {
-    id: 1,
-    title: 'Massage relaxant',
-    price: '200',
-    duration: '2 hours',
-    image: require('../assets/images/massage/massage1.jpg'),
-    category: 'Relaxation'
-  },
-  {
-    id: 2,
-    title: 'Massage suédois',
-    price: '250',
-    duration: '1.5 hours',
-    image: require('../assets/images/massage/massage2.jpg'),
-    category: 'Therapeutic'
-  },
-  {
-    id: 3,
-    title: 'Massage tonique',
-    price: '300',
-    duration: '1 hour',
-    image: require('../assets/images/massage/massage1.jpg'),
-    category: 'Energizing'
-  },
-  {
-    id: 4,
-    title: 'Massage oriental',
-    price: '220',
-    duration: '2.5 hours',
-    image: require('../assets/images/massage/massage2.jpg'),
-    category: 'Cultural'
-  },
-  {
-    id: 5,
-    title: 'Massage aux huiles essentielles',
-    price: '280',
-    duration: '1.5 hours',
-    image: require('../assets/images/massage/massage1.jpg'),
-    category: 'Aromatherapy'
-  }
-]
-
-const Massage = () => {
+const Massage = ({navigation}: any) => {
   const {t} = useTranslation()
-  const navigation = useNavigation()
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(
+    null
+  )
+
+  const {
+    data: massageResponse,
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['MASSAGE_KEY'],
+    queryFn: getMassageData
+  })
+
+  console.log('MassageData:', massageResponse)
+
+  // Extract unique specialties from massage items
+  const specialties = React.useMemo(() => {
+    const massageItems = massageResponse?.massageItems || []
+
+    if (!massageItems || massageItems.length === 0) return []
+
+    const uniqueSpecialties = new Map()
+    massageItems.forEach((item: any) => {
+      if (item.specialty && !uniqueSpecialties.has(item.specialty)) {
+        uniqueSpecialties.set(item.specialty, item.specialty)
+      }
+    })
+
+    return Array.from(uniqueSpecialties.values())
+  }, [massageResponse])
+
+  // Filter massages by selected specialty
+  const filteredMassages = React.useMemo(() => {
+    const massageItems = massageResponse?.massageItems || []
+
+    if (!massageItems || massageItems.length === 0) return []
+
+    if (!selectedSpecialty) {
+      return massageItems
+    }
+
+    return massageItems.filter(
+      (item: any) => item.specialty === selectedSpecialty
+    )
+  }, [massageResponse, selectedSpecialty])
+
+  console.log('Specialties:', specialties)
+  console.log('Filtered Massages:', filteredMassages)
+
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={styles.loadingText}>{t('loading') || 'Loading...'}</Text>
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>
+          {t('error_loading_massages') || 'Error loading massages'}
+        </Text>
+      </View>
+    )
+  }
+
   return (
     <View style={{flex: 1, paddingBottom: hp(2)}}>
       <View style={styles.header}>
@@ -107,17 +106,24 @@ const Massage = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Specialty Filter Buttons */}
       <View style={{paddingHorizontal: wp(3)}}>
         <FlatList
-          data={filterOptions}
-          keyExtractor={item => item.id.toString()}
+          data={['all', ...specialties]}
+          keyExtractor={(item, index) => index.toString()}
           horizontal
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={{paddingVertical: hp(1)}}
           renderItem={({item}) => (
             <Button
-              variant="outline"
-              title={t(item.title)}
-              icon={item.icon}
+              variant={
+                (item === 'all' && !selectedSpecialty) ||
+                item === selectedSpecialty
+                  ? 'primary'
+                  : 'outline'
+              }
+              title={item === 'all' ? t('all') || 'All' : item}
+              onPress={() => setSelectedSpecialty(item === 'all' ? null : item)}
               style={{
                 marginRight: wp(2)
               }}
@@ -126,27 +132,36 @@ const Massage = () => {
         />
       </View>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <Text style={styles.sectionTitle}>{t('recommended_for_you')}</Text>
-          <FlatList
-            data={data}
-            keyExtractor={item => item.id.toString()}
-            horizontal
-            contentContainerStyle={{paddingLeft: wp(5)}}
-            renderItem={({item}) => (
-              <SpaCard
-                onPress={() =>
-                  navigation.navigate('TripDetails', {id: item.id})
-                }
-                image={item.image}
-                title={item.title}
-                category={item.category}
-                price={item.price}
-                duration={item.duration}
-              />
-            )}
-          />
+
+          {filteredMassages.length > 0 ? (
+            <FlatList
+              data={filteredMassages}
+              keyExtractor={item => item._id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{paddingLeft: wp(5)}}
+              renderItem={({item}) => (
+                <MassageCard
+                  onPress={() =>
+                    navigation.navigate('MassageDetails', {id: item._id})
+                  }
+                  image={item.image}
+                  title={item.name}
+                  specialty={item.specialty}
+                  massageId={item._id}
+                />
+              )}
+            />
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>
+                {t('no_massages_found') || 'No massages found'}
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -176,5 +191,31 @@ const styles = StyleSheet.create({
     color: 'white',
     marginVertical: hp(1.5),
     paddingHorizontal: wp(3)
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
+  loadingText: {
+    color: '#fff',
+    marginTop: 10,
+    fontSize: 16
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: wp(3)
+  },
+  emptyText: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 16
   }
 })
