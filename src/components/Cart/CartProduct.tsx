@@ -18,6 +18,7 @@ interface Props {
   onDelete?: () => void
   onIncreaseQuantity?: () => void
   onDecreaseQuantity?: () => void
+  hasTVPreferredFocus?: boolean
 }
 
 const CartProduct = ({
@@ -25,7 +26,6 @@ const CartProduct = ({
   price,
   image,
   quantity,
-  onEdit,
   onDelete,
   onIncreaseQuantity,
   onDecreaseQuantity

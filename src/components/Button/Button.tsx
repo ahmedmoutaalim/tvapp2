@@ -87,23 +87,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 5,
     paddingHorizontal: 24,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 2,
-    borderColor: 'transparent'
+    borderColor: '#fff',
+    backgroundColor: 'transparent'
   },
   primaryButton: {
-    backgroundColor: '#007bff'
+    backgroundColor: 'transparent'
   },
   secondaryButton: {
-    backgroundColor: '#6c757d'
+    backgroundColor: 'transparent'
   },
   outlineButton: {
     backgroundColor: 'transparent',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#fff'
   },
   dangerButton: {
-    backgroundColor: '#dc3545'
+    backgroundColor: 'transparent'
   },
   disabled: {
     opacity: 0.5
@@ -124,6 +125,8 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   focused: {
-    borderColor: '#fff'
+    borderColor: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    transform: [{scale: 1.05}]
   }
 })

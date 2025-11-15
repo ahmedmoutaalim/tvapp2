@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     color: '#fff',
-    fontSize: 40,
+    fontSize: 36,
     fontWeight: 'bold',
     marginBottom: 12
   },

@@ -1,5 +1,6 @@
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native'
 import React from 'react'
+import {useTranslation} from 'react-i18next'
 import Button from '../Button/Button'
 
 interface MassageCardProps {
@@ -16,6 +17,8 @@ const MassageCard: React.FC<MassageCardProps> = ({
   image,
   onPress
 }) => {
+  const {t} = useTranslation()
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       {/* Massage Image */}
@@ -36,7 +39,7 @@ const MassageCard: React.FC<MassageCardProps> = ({
 
         <View style={styles.details}>
           <Text style={styles.specialtyText}>
-            Spécialité: <Text style={styles.specialtyValue}>{specialty}</Text>
+            {t('specialty')}: <Text style={styles.specialtyValue}>{specialty}</Text>
           </Text>
         </View>
 
@@ -46,7 +49,7 @@ const MassageCard: React.FC<MassageCardProps> = ({
           onPress={onPress}
           style={styles.button}
           textStyle={{
-            color: 'black',
+            color: '#000',
             fontSize: 14,
             fontWeight: 'bold'
           }}
@@ -111,10 +114,9 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: 8,
-    backgroundColor: '#00EB5B',
-    borderWidth: 1,
-    borderColor: '#0DAF4C',
-    borderRadius: 20,
-    color: 'black'
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#000',
+    borderRadius: 8
   }
 })

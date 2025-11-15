@@ -34,7 +34,7 @@ const BookingCard = () => {
     'Samedi'
   ]
 
-  const formatDate = date => {
+  const formatDate = (date: any) => {
     const dayName = daysFull[date.getDay()].substring(0, 3)
     const day = date.getDate()
     const month = months[date.getMonth()]
@@ -46,7 +46,7 @@ const BookingCard = () => {
     setShowDatePicker(true)
   }
 
-  const onDateChange = (event, date) => {
+  const onDateChange = (event: any, date: any) => {
     // On Android, hide picker immediately
     if (Platform.OS === 'android') {
       setShowDatePicker(false)

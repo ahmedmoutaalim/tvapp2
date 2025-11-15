@@ -5,10 +5,13 @@ import {
   View,
   FlatList,
   ActivityIndicator,
-  Alert
+  Alert,
+  TVEventControl,
+  Platform
 } from 'react-native'
-import React, {useState} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import {useNavigation} from '@react-navigation/native'
+import {useTranslation} from 'react-i18next'
 import Icon from 'react-native-vector-icons/Feather'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
 import CartProduct from '../components/Cart/CartProduct'
@@ -18,12 +21,14 @@ import {useCart} from '../context/CartContext'
 import {createOrder} from '../services/order'
 
 const Cart = () => {
+  const {t} = useTranslation()
   const navigation = useNavigation()
   const {cart, removeFromCart, updateQuantity, clearCart, isLoading} = useCart()
   const [visible, setVisible] = useState(false)
   const [action, setAction] = useState<'delete' | 'order' | null>(null)
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
   const [isOrdering, setIsOrdering] = useState(false)
+  const [isOrderButtonFocused, setIsOrderButtonFocused] = useState(false)
 
   const totalItems = cart.totalItems
 
@@ -61,17 +66,12 @@ const Cart = () => {
     )
   }
 
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = useCallback(async () => {
     if (cart.items.length === 0) {
       Alert.alert('Empty Cart', 'Please add items to your cart first')
       return
     }
 
-    setAction('order')
-    setVisible(true)
-  }
-
-  const confirmOrder = async () => {
     setIsOrdering(true)
     try {
       // Group items by client_id (should be same for all)
@@ -106,7 +106,6 @@ const Cart = () => {
       console.log('📊 Order responses:', JSON.stringify(responses, null, 2))
 
       await clearCart()
-      setVisible(false)
       Alert.alert('Success', 'Your order has been placed successfully!')
     } catch (error) {
       console.error('❌ Error placing order:', error)
@@ -114,7 +113,55 @@ const Cart = () => {
     } finally {
       setIsOrdering(false)
     }
-  }
+  }, [cart.items, clearCart])
+
+  // TV Event Handler for handling remote control events
+  useEffect(() => {
+    if (!Platform.isTV) return
+
+    const handleTVEvent = (evt: any) => {
+      console.log(
+        'TV Event:',
+        evt.eventType,
+        'Order button focused:',
+        isOrderButtonFocused
+      )
+
+      // Handle select event (OK/Enter button on remote)
+      if (evt && evt.eventType === 'select') {
+        if (isOrderButtonFocused && !isOrdering) {
+          console.log('TV Select event detected on focused order button')
+          handlePlaceOrder()
+        }
+      }
+    }
+
+    // For newer React Native versions
+    let tvEventSubscription: any
+
+    try {
+      // Try the new API first
+      const TVEventHandler = require('react-native').TVEventHandler
+      if (TVEventHandler && TVEventHandler.addListener) {
+        tvEventSubscription = TVEventHandler.addListener(handleTVEvent)
+      }
+    } catch (error) {
+      // If new API doesn't work, try enabling TV event control
+      if (TVEventControl && TVEventControl.enableTVMenuKey) {
+        TVEventControl.enableTVMenuKey()
+      }
+      console.log('Using fallback TV event handling')
+    }
+
+    return () => {
+      if (tvEventSubscription && tvEventSubscription.remove) {
+        tvEventSubscription.remove()
+      }
+      if (TVEventControl && TVEventControl.disableTVMenuKey) {
+        TVEventControl.disableTVMenuKey()
+      }
+    }
+  }, [isOrderButtonFocused, isOrdering, handlePlaceOrder])
 
   if (isLoading) {
     return (
@@ -196,20 +243,44 @@ const Cart = () => {
           />
 
           <View style={styles.footer}>
-            <Button
-              title={`Place Order - ${cart.totalPrice.toFixed(2)} MAD`}
-              onPress={handlePlaceOrder}
-              style={styles.orderButton}
-            />
+            <TouchableOpacity
+              style={[
+                styles.orderButton,
+                isOrdering && styles.orderButtonDisabled,
+                isOrderButtonFocused && styles.orderButtonFocused
+              ]}
+              onPress={() => {
+                console.log('Place Order button pressed via touch/click')
+                handlePlaceOrder()
+              }}
+              onFocus={() => {
+                console.log('Place Order button focused')
+                setIsOrderButtonFocused(true)
+              }}
+              onBlur={() => {
+                console.log('Place Order button blurred')
+                setIsOrderButtonFocused(false)
+              }}
+              disabled={isOrdering}
+              hasTVPreferredFocus={false}
+              tvParallaxProperties={{enabled: false}}
+              focusable={true}
+              accessible={true}
+              accessibilityRole="button"
+              activeOpacity={0.7}>
+              <Text style={styles.orderButtonText}>
+                {isOrdering
+                  ? 'Processing...'
+                  : `Place Order - ${cart.totalPrice.toFixed(2)} MAD`}
+              </Text>
+            </TouchableOpacity>
           </View>
         </>
       )}
 
       <Modal
         visible={visible}
-        title={
-          action === 'delete' ? 'Supprimer le produit' : 'Confirmer la commande'
-        }
+        title={t('delete_product')}
         onClose={() => {
           console.log('🔵 Modal closing')
           setVisible(false)
@@ -218,29 +289,19 @@ const Cart = () => {
         }}
         bodyStyle={{alignItems: 'center'}}
         footer={
-          action === 'delete' ? (
-            <Button
-              title="Supprimer"
-              onPress={() => {
-                console.log('🟢 Delete button in modal clicked')
-                handleDeleteItem()
-              }}
-              style={{backgroundColor: '#ff4d4d'}}
-            />
-          ) : (
-            <Button
-              title={isOrdering ? 'Processing...' : 'Confirmer'}
-              onPress={confirmOrder}
-              disabled={isOrdering}
-            />
-          )
+          <TouchableOpacity
+            style={styles.modalButton}
+            onPress={() => {
+              console.log('🟢 Delete button in modal clicked')
+              handleDeleteItem()
+            }}
+            focusable={true}
+            activeOpacity={0.7}>
+            <Text style={styles.modalButtonText}>{t('remove')}</Text>
+          </TouchableOpacity>
         }>
         <Text style={{color: 'white', textAlign: 'center'}}>
-          {action === 'delete'
-            ? 'Êtes-vous sûr de vouloir supprimer ce produit?'
-            : `Confirmer la commande de ${cart.totalItems} produit${
-                cart.totalItems !== 1 ? 's' : ''
-              } pour ${cart.totalPrice.toFixed(2)} MAD?`}
+          {t('are_you_sure_delete')}
         </Text>
       </Modal>
     </View>
@@ -317,7 +378,50 @@ const styles = StyleSheet.create({
     borderTopColor: '#333'
   },
   orderButton: {
-    backgroundColor: '#28a745',
-    paddingVertical: 16
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#fff',
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+    margin: 'auto'
+  },
+  orderButtonDisabled: {
+    opacity: 0.5
+  },
+  orderButtonFocused: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    transform: [{scale: 1.05}]
+  },
+  orderButtonPressed: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    transform: [{scale: 0.98}]
+  },
+  orderButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600'
+  },
+  modalButton: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#fff',
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 150
+  },
+  modalButtonDisabled: {
+    backgroundColor: 'transparent',
+    opacity: 0.6
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600'
   }
 })

@@ -66,10 +66,10 @@ const styles = StyleSheet.create({
     marginRight: 15,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: '#000',
-    borderRadius: 12,
+    backgroundColor: 'transparent',
+    borderRadius: 8,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: '#fff',
     minWidth: 130,
     shadowColor: '#000',
     shadowOffset: {
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   selectedContainer: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF'
+    backgroundColor: 'transparent',
+    borderColor: '#fff'
   },
   focusedContainer: {
     borderColor: '#ffffff',

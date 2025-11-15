@@ -17,11 +17,8 @@ import TripCard from '../components/Trips/TripCard'
 import BookingCard from '../components/BookingCard/BookingCard'
 import MediaSection from '../components/MediaSection/MediaSection'
 
-const TripDetails = () => {
+const TripDetails = ({navigation}: any) => {
   const {t} = useTranslation()
-  const navigation = useNavigation()
-  const route = useRoute()
-  const {id} = route.params
 
   return (
     <ScrollView style={styles.container}>

@@ -306,7 +306,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   paginationButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#fff',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
@@ -314,7 +316,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   paginationButtonDisabled: {
-    backgroundColor: '#333',
+    backgroundColor: 'transparent',
     opacity: 0.5
   },
   paginationButtonText: {

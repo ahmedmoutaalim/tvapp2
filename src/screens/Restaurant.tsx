@@ -237,15 +237,15 @@ const styles = StyleSheet.create({
   categoryButton: {
     paddingHorizontal: wp(4),
     paddingVertical: hp(1),
-    borderRadius: wp(6),
-    backgroundColor: '#000',
+    borderRadius: 8,
+    backgroundColor: 'transparent',
     marginRight: wp(2),
-    borderWidth: 1,
-    borderColor: '#000'
+    borderWidth: 2,
+    borderColor: '#fff'
   },
   categoryButtonActive: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF'
+    backgroundColor: 'transparent',
+    borderColor: '#fff'
   },
   categoryButtonText: {
     color: '#fff',

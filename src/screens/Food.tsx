@@ -106,7 +106,7 @@ const Food = () => {
                 styles.categoryButtonText,
                 !selectedCategory && styles.categoryButtonTextActive
               ]}>
-              {t('all') || 'All'}
+              {t('all')}
             </Text>
           </TouchableOpacity>
 
@@ -187,14 +187,14 @@ const styles = StyleSheet.create({
   categoryButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    backgroundColor: 'transparent',
     marginRight: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)'
+    borderWidth: 2,
+    borderColor: '#fff'
   },
   categoryButtonActive: {
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
     borderColor: '#fff'
   },
   categoryButtonText: {
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize'
   },
   categoryButtonTextActive: {
-    color: '#000'
+    color: '#fff'
   },
   productsList: {
     paddingVertical: 20

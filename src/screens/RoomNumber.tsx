@@ -145,13 +145,16 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 60,
-    backgroundColor: '#007AFF',
-    borderRadius: 10,
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#fff',
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center'
   },
   buttonDisabled: {
-    backgroundColor: '#555'
+    backgroundColor: 'transparent',
+    opacity: 0.5
   },
   buttonText: {
     fontSize: 18,

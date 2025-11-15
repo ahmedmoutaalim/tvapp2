@@ -34,5 +34,14 @@
   "recommended_for_you": "Recommended for you",
   "spa_&_wellness": "Spa & Wellness",
   "spa_description": "Relax and rejuvenate with our spa services. Enjoy massages, facials, and body treatments in the comfort of your home. Our professional therapists bring the spa experience to you, ensuring a tranquil and soothing environment.",
-  "massage": "Massage"
+  "massage": "Massage",
+  "remove": "Remove",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "delete_product": "Delete Product",
+  "confirm_order": "Confirm Order",
+  "are_you_sure_delete": "Are you sure you want to delete this product?",
+  "confirm_order_text": "Confirm order of {{count}} product(s) for {{total}} MAD?",
+  "specialty": "Specialty",
+  "all": "All"
 }

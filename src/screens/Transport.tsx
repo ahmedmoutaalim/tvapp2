@@ -11,23 +11,18 @@ import React, {useState, useEffect} from 'react'
 
 import Icon from 'react-native-vector-icons/Feather'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
-import FAIcon from 'react-native-vector-icons/FontAwesome'
-import Button from '../components/Button/Button'
-
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp
 } from 'react-native-responsive-screen'
 import {RFValue} from 'react-native-responsive-fontsize'
-import {useNavigation} from '@react-navigation/native'
 import {useTranslation} from 'react-i18next'
 import TransportCard from '../components/Trips/TransportCard'
 import {useQuery} from '@tanstack/react-query'
 import {getTransportData} from '../services/transport'
 
-const Transport = () => {
+const Transport = ({navigation}: any) => {
   const {t} = useTranslation()
-  const navigation = useNavigation()
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [categories, setCategories] = useState<
@@ -300,15 +295,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5)
   },
   paginationButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#fff',
     paddingHorizontal: wp(5),
     paddingVertical: hp(1.5),
-    borderRadius: wp(2),
+    borderRadius: 8,
     minWidth: wp(25),
     alignItems: 'center'
   },
   paginationButtonDisabled: {
-    backgroundColor: '#333',
+    backgroundColor: 'transparent',
     opacity: 0.5
   },
   paginationButtonText: {
@@ -326,15 +323,15 @@ const styles = StyleSheet.create({
   categoryButton: {
     paddingHorizontal: wp(4),
     paddingVertical: hp(1),
-    borderRadius: wp(6),
-    backgroundColor: '#000',
+    borderRadius: 8,
+    backgroundColor: 'transparent',
     marginRight: wp(2),
-    borderWidth: 1,
-    borderColor: '#000'
+    borderWidth: 2,
+    borderColor: '#fff'
   },
   categoryButtonActive: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF'
+    backgroundColor: 'transparent',
+    borderColor: '#fff'
   },
   categoryButtonText: {
     color: 'white',

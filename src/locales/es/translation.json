@@ -21,5 +21,14 @@
   "dessert": "Postre",
   "food": "Comida",
   "food_description": "Disfruta de una variedad de cocinas entregadas directamente a tu habitación. Desde delicias locales hasta favoritos internacionales, tenemos algo para todos.",
-  "book_now": "Reservar Ahora"
+  "book_now": "Reservar Ahora",
+  "remove": "Eliminar",
+  "cancel": "Cancelar",
+  "confirm": "Confirmar",
+  "delete_product": "Eliminar Producto",
+  "confirm_order": "Confirmar Pedido",
+  "are_you_sure_delete": "¿Estás seguro de que quieres eliminar este producto?",
+  "confirm_order_text": "¿Confirmar pedido de {{count}} producto(s) por {{total}} MAD?",
+  "specialty": "Especialidad",
+  "all": "Todos"
 }

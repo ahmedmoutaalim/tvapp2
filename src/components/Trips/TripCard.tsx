@@ -55,7 +55,7 @@ const TripCard = ({
           <Button
             title={t('book_now')}
             style={styles.button}
-            textStyle={{color: 'black'}}
+            textStyle={{color: '#fff'}}
             variant="primary"
             onPress={() => console.log('Book Now pressed')}
           />
@@ -124,8 +124,10 @@ const styles = StyleSheet.create({
   button: {
     paddingHorizontal: 14,
     paddingVertical: 4,
-    borderRadius: 30,
-    backgroundColor: '#92CC97'
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#fff'
   },
   type: {
     color: '#ccc',

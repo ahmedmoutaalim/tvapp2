@@ -38,7 +38,7 @@ const SpaCard: React.FC<SpaCardProps> = ({title, image, spaId, onPress}) => {
           onPress={onPress}
           style={styles.button}
           textStyle={{
-            color: 'black',
+            color: '#fff',
             fontSize: 14,
             fontWeight: 'bold'
           }}
@@ -96,10 +96,9 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: 8,
-    backgroundColor: '#00EB5B',
-    borderWidth: 1,
-    borderColor: '#0DAF4C',
-    borderRadius: 20,
-    color: 'black'
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#fff',
+    borderRadius: 8
   }
 })
