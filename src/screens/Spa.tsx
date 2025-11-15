@@ -4,24 +4,22 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ActivityIndicator
 } from 'react-native'
 import React from 'react'
-
 import Icon from 'react-native-vector-icons/Feather'
 import HeadTitle from '../components/HeadTitle/HeadTitle'
-import FAIcon from 'react-native-vector-icons/FontAwesome'
 import Button from '../components/Button/Button'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp
 } from 'react-native-responsive-screen'
 import {RFValue} from 'react-native-responsive-fontsize'
-import {useNavigation} from '@react-navigation/native'
 import {useTranslation} from 'react-i18next'
-import TransportCard from '../components/Trips/TransportCard'
-import {transport} from '../data/transport'
 import SpaCard from '../components/SpaCard/SpaCard'
+import {useQuery} from '@tanstack/react-query'
+import {getSpaData} from '../services/spa'
 
 const filterOptions = [
   {
@@ -46,52 +44,46 @@ const filterOptions = [
   }
 ]
 
-const data = [
-  {
-    id: 1,
-    title: 'Massage relaxant',
-    price: '200',
-    duration: '2 hours',
-    image: require('../assets/images/massage/massage1.jpg'),
-    category: 'Relaxation'
-  },
-  {
-    id: 2,
-    title: 'Massage suédois',
-    price: '250',
-    duration: '1.5 hours',
-    image: require('../assets/images/massage/massage2.jpg'),
-    category: 'Therapeutic'
-  },
-  {
-    id: 3,
-    title: 'Massage tonique',
-    price: '300',
-    duration: '1 hour',
-    image: require('../assets/images/massage/massage1.jpg'),
-    category: 'Energizing'
-  },
-  {
-    id: 4,
-    title: 'Massage oriental',
-    price: '220',
-    duration: '2.5 hours',
-    image: require('../assets/images/massage/massage2.jpg'),
-    category: 'Cultural'
-  },
-  {
-    id: 5,
-    title: 'Massage aux huiles essentielles',
-    price: '280',
-    duration: '1.5 hours',
-    image: require('../assets/images/massage/massage1.jpg'),
-    category: 'Aromatherapy'
-  }
-]
-
-const Spa = () => {
+const Spa = ({navigation}: any) => {
   const {t} = useTranslation()
-  const navigation = useNavigation()
+
+  const {
+    data: spaResponse,
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['SPA_KEY'],
+    queryFn: getSpaData
+  })
+
+  console.log('spaData:', spaResponse)
+
+  // Get spa items from response
+  const spaItems = React.useMemo(() => {
+    return spaResponse?.spaItems || spaResponse?.spaItems || []
+  }, [spaResponse])
+
+  console.log('Spa Items:', spaItems)
+
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={styles.loadingText}>{t('loading') || 'Loading...'}</Text>
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>
+          {t('error_loading_spa') || 'Error loading spa items'}
+        </Text>
+      </View>
+    )
+  }
+
   return (
     <View style={{flex: 1, paddingBottom: hp(2)}}>
       <View style={styles.header}>
@@ -112,6 +104,7 @@ const Spa = () => {
           data={filterOptions}
           keyExtractor={item => item.id.toString()}
           horizontal
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={{paddingVertical: hp(1)}}
           renderItem={({item}) => (
             <Button
@@ -126,27 +119,35 @@ const Spa = () => {
         />
       </View>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <Text style={styles.sectionTitle}>{t('recommended_for_you')}</Text>
-          <FlatList
-            data={data}
-            keyExtractor={item => item.id.toString()}
-            horizontal
-            contentContainerStyle={{paddingLeft: wp(5)}}
-            renderItem={({item}) => (
-              <SpaCard
-                onPress={() =>
-                  navigation.navigate('TripDetails', {id: item.id})
-                }
-                image={item.image}
-                title={item.title}
-                category={item.category}
-                price={item.price}
-                duration={item.duration}
-              />
-            )}
-          />
+
+          {spaItems.length > 0 ? (
+            <FlatList
+              data={spaItems}
+              keyExtractor={item => item._id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{paddingLeft: wp(5)}}
+              renderItem={({item}) => (
+                <SpaCard
+                  onPress={() =>
+                    navigation.navigate('SpaDetails', {id: item._id})
+                  }
+                  image={item.image}
+                  title={item.title}
+                  spaId={item._id}
+                />
+              )}
+            />
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>
+                {t('no_spa_services_found') || 'No spa services found'}
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -176,5 +177,31 @@ const styles = StyleSheet.create({
     color: 'white',
     marginVertical: hp(1.5),
     paddingHorizontal: wp(3)
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
+  loadingText: {
+    color: '#fff',
+    marginTop: 10,
+    fontSize: 16
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: wp(3)
+  },
+  emptyText: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 16
   }
 })

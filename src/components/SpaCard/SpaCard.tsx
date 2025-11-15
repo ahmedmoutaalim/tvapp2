@@ -1,44 +1,41 @@
-// components/SpaCard.tsx
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native'
 import React from 'react'
 import Button from '../Button/Button'
-import {Pressable} from 'react-native-gesture-handler'
 
 interface SpaCardProps {
   title: string
-  duration: string
-  price: string
-  image: any
+  image?: string | null
+  spaId: string
   onPress?: () => void
 }
 
-const SpaCard: React.FC<SpaCardProps> = ({
-  title,
-  duration,
-  price,
-  image,
-  onPress
-}) => {
+const SpaCard: React.FC<SpaCardProps> = ({title, image, spaId, onPress}) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Image source={image} style={styles.image} />
+      {/* Spa Image */}
+      <View style={styles.imageContainer}>
+        {image ? (
+          <Image source={{uri: image}} style={styles.image} />
+        ) : (
+          <View style={styles.placeholderImage}>
+            <Text style={styles.placeholderText}>No Image</Text>
+          </View>
+        )}
+      </View>
+
       <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <View style={styles.details}>
-          <Text style={styles.detailText}>Durée : {duration}</Text>
-          <Text style={styles.priceText}>
-            à partir de{' '}
-            <Text
-              style={{
-                color: '#B61753'
-              }}>
-              {price} MAD
-            </Text>
-          </Text>
-        </View>
+        <Text style={styles.title} numberOfLines={2}>
+          {title}
+        </Text>
+
+        <Text style={styles.descriptionText}>
+          Découvrez nos services de spa et bien-être
+        </Text>
+
         <Button
           title="Réserver"
           variant="primary"
+          onPress={onPress}
           style={styles.button}
           textStyle={{
             color: 'black',
@@ -59,42 +56,48 @@ const styles = StyleSheet.create({
     width: 200,
     borderRadius: 18,
     marginBottom: 15,
-    marginHorizontal: 10
+    marginHorizontal: 10,
+    overflow: 'hidden'
+  },
+  imageContainer: {
+    width: '100%',
+    height: 120
   },
   image: {
     width: '100%',
-    height: 120,
+    height: '100%',
     resizeMode: 'cover'
   },
-  content: {
-    paddingHorizontal: 8
+  placeholderImage: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#E0E0E0'
   },
-
+  placeholderText: {
+    color: '#999',
+    fontSize: 14
+  },
+  content: {
+    paddingHorizontal: 8,
+    paddingVertical: 8
+  },
   title: {
     color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 10
+    marginBottom: 8
   },
-
-  details: {
-    justifyContent: 'space-between',
-    marginBottom: 4
-  },
-  detailText: {
-    color: '#767474',
-    fontSize: 12
-  },
-  priceText: {
+  descriptionText: {
     color: '#767474',
     fontSize: 12,
-    fontWeight: 'bold'
+    marginBottom: 10
   },
-
   button: {
     paddingVertical: 8,
     backgroundColor: '#00EB5B',
-    borderWWidth: 1,
+    borderWidth: 1,
     borderColor: '#0DAF4C',
     borderRadius: 20,
     color: 'black'
