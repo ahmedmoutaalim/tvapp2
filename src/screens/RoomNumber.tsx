@@ -5,19 +5,18 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  Alert
+  Alert,
+  TVFocusGuideView
 } from 'react-native'
 import {useTranslation} from 'react-i18next'
 import {useMutation} from '@tanstack/react-query'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import {useNavigation} from '@react-navigation/native'
 import {getMeData} from '../services/clientTv'
 import {saveClientData} from '../utils/clientStorage'
 import {RootNavigationProp} from '../navigation/types'
 
-const RoomNumberScreen = () => {
+const RoomNumberScreen = ({navigation}: any) => {
   const {t} = useTranslation()
-  const navigation = useNavigation<RootNavigationProp>()
   const [roomNumber, setRoomNumber] = useState('')
 
   // Check if room number already exists when component mounts
@@ -84,11 +83,16 @@ const RoomNumberScreen = () => {
             onChangeText={handleChange}
             keyboardType="numeric"
             autoFocus
+            returnKeyType="done"
+            onSubmitEditing={handleContinue}
           />
           <TouchableOpacity
             style={[styles.button, isPending && styles.buttonDisabled]}
             onPress={handleContinue}
-            disabled={isPending}>
+            disabled={isPending}
+            hasTVPreferredFocus={true}
+            focusable={true}
+            activeOpacity={0.7}>
             <Text style={styles.buttonText}>
               {isPending ? 'Loading...' : t('continue')}
             </Text>
