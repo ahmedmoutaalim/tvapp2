@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   categoryButton: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 6,
     borderRadius: 8,
     backgroundColor: 'transparent',
     marginRight: 10,

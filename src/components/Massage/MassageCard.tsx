@@ -39,7 +39,8 @@ const MassageCard: React.FC<MassageCardProps> = ({
 
         <View style={styles.details}>
           <Text style={styles.specialtyText}>
-            {t('specialty')}: <Text style={styles.specialtyValue}>{specialty}</Text>
+            {t('specialty')}:{' '}
+            <Text style={styles.specialtyValue}>{specialty}</Text>
           </Text>
         </View>
 

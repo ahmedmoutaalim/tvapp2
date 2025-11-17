@@ -53,20 +53,14 @@ const ProductCard = ({
 
   return (
     <View style={[styles.container]}>
-      <Pressable
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        style={styles.pressable}>
-        <Image
-          source={{uri: item.image}}
-          style={[styles.image, isFocused && styles.focused]}
-        />
+      <View style={styles.imageContainer}>
+        <Image source={{uri: item.image}} style={styles.image} />
         {showDelete && (
           <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
             <Icon name="trash-2" size={16} color="#fff" />
           </TouchableOpacity>
         )}
-      </Pressable>
+      </View>
 
       <View style={styles.details}>
         <Text style={styles.title} numberOfLines={2}>
@@ -75,8 +69,11 @@ const ProductCard = ({
         <Text style={styles.price}>{item.price} MAD</Text>
 
         {onAddToCart && (
-          <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
-            <Icon name="shopping-cart" size={16} color="#fff" />
+          <TouchableOpacity
+            style={[styles.addButton, isFocused && styles.addButtonFocused]}
+            onPress={handleAddToCart}
+            onFocus={() => setIsFocused(false)}
+            onBlur={() => setIsFocused(false)}>
             <Text style={styles.addButtonText}>{t('add_to_cart')}</Text>
           </TouchableOpacity>
         )}
@@ -93,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 180
   },
-  pressable: {
+  imageContainer: {
     position: 'relative',
     width: '100%'
   },
@@ -103,29 +100,25 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 8
   },
-  focused: {
-    borderWidth: 3,
-    borderColor: '#007AFF',
-    borderRadius: 16
-  },
   details: {
     width: '100%',
-    paddingHorizontal: 4
+    paddingHorizontal: 8
   },
   title: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 4,
-    minHeight: 40
+    textAlign: 'left',
+    marginTop: 4,
+    marginBottom: 2,
+    minHeight: 22
   },
   price: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 8
+    textAlign: 'left',
+    marginBottom: 4
   },
   addButton: {
     flexDirection: 'row',
@@ -139,6 +132,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     gap: 6,
     marginTop: 4
+  },
+  addButtonFocused: {
+    borderWidth: 3,
+    borderColor: '#007AFF',
+    backgroundColor: 'rgba(0, 122, 255, 0.2)'
   },
   addButtonText: {
     color: '#fff',

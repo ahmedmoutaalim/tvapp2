@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   categoryButton: {
     paddingHorizontal: wp(4),
-    paddingVertical: hp(1),
+    paddingVertical: 6,
     borderRadius: 8,
     backgroundColor: 'transparent',
     marginRight: wp(2),

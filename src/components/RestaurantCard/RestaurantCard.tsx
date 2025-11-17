@@ -29,7 +29,7 @@ const RestaurantCard = ({item}: Props) => {
 
   return (
     <Pressable
-      onFocus={() => setIsFocused(true)}
+      onFocus={() => setIsFocused(false)}
       onBlur={() => setIsFocused(false)}
       style={[styles.container, isFocused && styles.focused]}>
       {!imageError ? (

@@ -254,11 +254,11 @@ const styles = StyleSheet.create({
   },
   leftSide: {
     flexShrink: 1,
-    marginRight: 20
+    width: 500
   },
   welcomeText: {
     color: '#fff',
-    fontSize: 36,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 12
   },

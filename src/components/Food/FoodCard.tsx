@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#4CAF50'
+    color: 'white'
   },
   category: {
     fontSize: 11,
