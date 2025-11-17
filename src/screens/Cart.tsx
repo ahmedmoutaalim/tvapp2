@@ -67,11 +67,6 @@ const Cart = () => {
   }
 
   const handlePlaceOrder = useCallback(async () => {
-    if (cart.items.length === 0) {
-      Alert.alert('Empty Cart', 'Please add items to your cart first')
-      return
-    }
-
     setIsOrdering(true)
     try {
       // Group items by client_id (should be same for all)

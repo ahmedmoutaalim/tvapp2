@@ -30,5 +30,8 @@
   "are_you_sure_delete": "Êtes-vous sûr de vouloir supprimer ce produit?",
   "confirm_order_text": "Confirmer la commande de {{count}} produit(s) pour {{total}} MAD?",
   "specialty": "Spécialité",
-  "all": "Tous"
+  "all": "Tous",
+  "add_to_cart": "Ajouter au Panier",
+  "logout": "Déconnexion",
+  "logout_confirmation": "Êtes-vous sûr de vouloir vous déconnecter?"
 }

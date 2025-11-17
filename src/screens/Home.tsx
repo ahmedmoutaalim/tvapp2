@@ -130,10 +130,8 @@ const Home = () => {
       const storedRoomNumber = await AsyncStorage.getItem('roomNumber')
       if (storedRoomNumber) {
         setRoomNumber(storedRoomNumber)
-      } else {
-        // Navigate back to RoomNumber screen if no room number
-        navigation.navigate('RoomNumber')
       }
+      // Navigation to RoomNumber is handled by RootNavigator
     }
     checkRoomNumber()
   }, [])
@@ -142,10 +140,8 @@ const Home = () => {
     try {
       const clientData = await getClientData()
       if (!clientData) {
-        console.log('No clientData found. Clearing cart and room number...')
-        await clearCart()
-        await AsyncStorage.removeItem('roomNumber')
-        navigation.navigate('RoomNumber')
+        console.log('No clientData found in storage - will be fetched by query')
+        // Don't clear or navigate here - let the query handle it
         return
       }
 
@@ -164,7 +160,7 @@ const Home = () => {
         await clearClientData()
         await clearCart()
         await AsyncStorage.removeItem('roomNumber')
-        navigation.navigate('RoomNumber')
+        // RootNavigator will detect the removed roomNumber and navigate automatically
       } else {
         console.log(
           'Rental period still valid. Days remaining:',

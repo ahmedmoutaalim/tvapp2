@@ -15,6 +15,7 @@ import RoomNumber from '../screens/RoomNumber'
 import Navbar from '../components/layout/Navbar/Navbar'
 import Sidebar from '../components/layout/Sidebar/Sidebar'
 import Footer from '../components/layout/Footer/Footer'
+import LoadingScreen from '../components/LoadingScreen/LoadingScreen'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -23,13 +24,29 @@ const RootNavigator = () => {
 
   useEffect(() => {
     checkRoomNumber()
+
+    // Set up a periodic check for roomNumber changes
+    const interval = setInterval(() => {
+      checkRoomNumber()
+    }, 1000) // Check every second
+
+    return () => clearInterval(interval)
   }, [])
 
   const checkRoomNumber = async () => {
     try {
-      // await AsyncStorage.removeItem('roomNumber')
       const roomNumber = await AsyncStorage.getItem('roomNumber')
-      setHasRoomNumber(!!roomNumber)
+      console.log('roomNumber____', roomNumber)
+
+      // Only update state if it changed to avoid unnecessary re-renders
+      setHasRoomNumber(prev => {
+        const hasRoom = !!roomNumber
+        if (prev !== hasRoom) {
+          console.log('RoomNumber status changed:', hasRoom)
+          return hasRoom
+        }
+        return prev
+      })
     } catch (error) {
       console.error('Error checking room number:', error)
       setHasRoomNumber(false)
@@ -37,8 +54,11 @@ const RootNavigator = () => {
   }
 
   if (hasRoomNumber === null) {
-    return null // or a loading screen
+    return <LoadingScreen />
   }
+
+  // Show RoomNumber screen when there's NO room number, Main when there IS one
+  const initialScreen = hasRoomNumber ? 'Main' : 'RoomNumber'
 
   return (
     <>
@@ -56,7 +76,7 @@ const RootNavigator = () => {
             <Sidebar />
 
             <Stack.Navigator
-              initialRouteName={!hasRoomNumber ? 'RoomNumber' : 'Main'}
+              initialRouteName={initialScreen}
               screenOptions={{
                 headerShown: false,
                 contentStyle: {backgroundColor: 'transparent'},

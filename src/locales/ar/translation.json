@@ -30,5 +30,8 @@
   "are_you_sure_delete": "هل أنت متأكد أنك تريد حذف هذا المنتج؟",
   "confirm_order_text": "تأكيد طلب {{count}} منتج مقابل {{total}} درهم؟",
   "specialty": "التخصص",
-  "all": "الكل"
+  "all": "الكل",
+  "add_to_cart": "أضف إلى السلة",
+  "logout": "تسجيل الخروج",
+  "logout_confirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
 }

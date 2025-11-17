@@ -1,12 +1,48 @@
 import React, {useState} from 'react'
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert
+} from 'react-native'
 import Icon from 'react-native-vector-icons/Feather'
 import dayjs from 'dayjs'
+import {useTranslation} from 'react-i18next'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import RNRestart from 'react-native-restart'
 import CartIcon from '../../Cart/CartIcon'
 import SelectLanguages from './SelectLangagues'
+import {clearClientData} from '../../../utils/clientStorage'
+import {useCart} from '../../../context/CartContext'
+import {useLoading} from '../../../context/LoadingContext'
 
 const Navbar = () => {
   const currentDate = dayjs().format('D MMMM, HH:mm')
+  const {t} = useTranslation()
+  const {clearCart} = useCart()
+  const {setLoading} = useLoading()
+
+  const handleLogout = async () => {
+    Alert.alert(t('logout'), t('logout_confirmation'), [
+      {
+        text: t('cancel'),
+        style: 'cancel'
+      },
+      {
+        text: t('confirm'),
+        onPress: async () => {
+          setLoading(true)
+          await clearClientData()
+          await clearCart()
+          await AsyncStorage.removeItem('roomNumber')
+          // Force reload the app to navigate back to RoomNumber screen
+          RNRestart.restart()
+        }
+      }
+    ])
+  }
 
   return (
     <View style={styles.container}>
@@ -27,6 +63,10 @@ const Navbar = () => {
         <CartIcon />
 
         <SelectLanguages />
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Icon name="log-out" size={22} color="#fff" />
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -59,6 +99,10 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     marginHorizontal: 10
+  },
+  logoutButton: {
+    marginLeft: 12,
+    padding: 5
   },
   langButton: {
     marginLeft: 12,

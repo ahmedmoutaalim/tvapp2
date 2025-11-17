@@ -1,6 +1,14 @@
-import {StyleSheet, Text, Image, Pressable, View, TouchableOpacity} from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  Image,
+  Pressable,
+  View,
+  TouchableOpacity
+} from 'react-native'
 import React, {useState} from 'react'
 import Icon from 'react-native-vector-icons/Feather'
+import {useTranslation} from 'react-i18next'
 import type {CartItemType} from '../../interfaces/cart'
 
 interface Product {
@@ -19,7 +27,14 @@ interface Props {
   showDelete?: boolean
 }
 
-const ProductCard = ({item, onAddToCart, onDelete, type, showDelete = false}: Props) => {
+const ProductCard = ({
+  item,
+  onAddToCart,
+  onDelete,
+  type,
+  showDelete = false
+}: Props) => {
+  const {t} = useTranslation()
   const [isFocused, setIsFocused] = useState(false)
 
   const handleAddToCart = (e: any) => {
@@ -47,24 +62,22 @@ const ProductCard = ({item, onAddToCart, onDelete, type, showDelete = false}: Pr
           style={[styles.image, isFocused && styles.focused]}
         />
         {showDelete && (
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={handleDelete}>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
             <Icon name="trash-2" size={16} color="#fff" />
           </TouchableOpacity>
         )}
       </Pressable>
 
       <View style={styles.details}>
-        <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
+        <Text style={styles.title} numberOfLines={2}>
+          {item.title}
+        </Text>
         <Text style={styles.price}>{item.price} MAD</Text>
 
         {onAddToCart && (
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={handleAddToCart}>
+          <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
             <Icon name="shopping-cart" size={16} color="#fff" />
-            <Text style={styles.addButtonText}>Add to Cart</Text>
+            <Text style={styles.addButtonText}>{t('add_to_cart')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -108,7 +121,7 @@ const styles = StyleSheet.create({
     minHeight: 40
   },
   price: {
-    color: '#4CAF50',
+    color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',

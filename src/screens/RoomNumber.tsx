@@ -47,8 +47,8 @@ const RoomNumberScreen = ({navigation}: any) => {
         await saveClientData(data.client)
       }
 
-      // Navigate to Main (Home) screen
-      navigation.navigate('Main')
+      // Navigate to Main (Home) screen - using replace to reset navigation stack
+      navigation.replace('Main')
     },
     onError: error => {
       Alert.alert('Error', 'Failed to fetch room data. Please try again.')
