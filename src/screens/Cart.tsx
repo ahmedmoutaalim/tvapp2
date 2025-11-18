@@ -118,12 +118,15 @@ const Cart = () => {
 
       // Handle select event (OK/Enter button on remote)
       if (evt && evt.eventType === 'select') {
-        if (isOrderButtonFocused && !isOrdering) {
+        if (isOrderButtonFocused && !isOrdering && cart.items.length > 0) {
           console.log('TV Select event detected on focused order button')
           handlePlaceOrder()
         }
       }
     }
+
+    // Only set up TV event handler if there are items in cart
+    if (cart.items.length === 0) return
 
     // For newer React Native versions
     let tvEventSubscription: any
@@ -150,7 +153,7 @@ const Cart = () => {
         TVEventControl.disableTVMenuKey()
       }
     }
-  }, [isOrderButtonFocused, isOrdering, handlePlaceOrder])
+  }, [isOrderButtonFocused, isOrdering, cart.items.length])
 
   if (isLoading) {
     return (
