@@ -63,7 +63,7 @@ const RootNavigator = () => {
   return (
     <>
       <ImageBackground
-        source={require('../assets/images/bghotel.jpg')}
+        source={require('../assets/images/bghotel.png')}
         style={styles.bg}
         resizeMode="cover">
         <LinearGradient

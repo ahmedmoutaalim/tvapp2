@@ -13,10 +13,10 @@ import i18n from '../../../../i18n'
 import {useLoading} from '../../../context/LoadingContext'
 
 const languages = [
-  {code: 'en', flag: 'https://flagcdn.com/w80/gb.png'},
-  {code: 'fr', flag: 'https://flagcdn.com/w80/fr.png'},
-  {code: 'ar', flag: 'https://flagcdn.com/w80/ma.png'},
-  {code: 'es', flag: 'https://flagcdn.com/w80/es.png'}
+  {code: 'en', flag: require('../../../assets/icons/lang/en.jpg')},
+  {code: 'fr', flag: require('../../../assets/icons/lang/fr.jpg')},
+  {code: 'ar', flag: require('../../../assets/icons/lang/ar.jpg')},
+  {code: 'es', flag: require('../../../assets/icons/lang/es.jpg')}
 ]
 
 const LANGUAGE_KEY = 'app_language'
@@ -79,7 +79,7 @@ const SelectLanguages = () => {
         onPress={toggleExpanded}
         activeOpacity={0.8}>
         <Image
-          source={{uri: selectedLanguage?.flag}}
+          source={selectedLanguage?.flag}
           style={styles.circleFlag}
           resizeMode="cover"
         />
@@ -103,7 +103,7 @@ const SelectLanguages = () => {
                       isSelected && styles.selectedCircle
                     ]}>
                     <Image
-                      source={{uri: lang.flag}}
+                      source={lang.flag}
                       style={styles.optionFlag}
                       resizeMode="cover"
                     />

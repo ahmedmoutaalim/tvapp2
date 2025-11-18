@@ -72,12 +72,6 @@ const Cart = () => {
       // Group items by client_id (should be same for all)
       const clientId = cart.items[0]?.client_id
 
-      if (!clientId) {
-        Alert.alert('Error', 'Client information not found')
-        setIsOrdering(false)
-        return
-      }
-
       console.log('📦 Starting order submission...')
       console.log('📦 Cart items:', cart.items.length)
       console.log('📦 Client ID:', clientId)

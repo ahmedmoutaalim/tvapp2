@@ -29,7 +29,14 @@ const TransportCard = ({
   const imageSource = typeof image === 'string' ? {uri: image} : image
 
   return (
-    <View style={styles.card} onTouchStart={onPress}>
+    <TouchableOpacity
+      style={[styles.card, isFocused && styles.cardFocused]}
+      onPress={onPress}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+      onPressIn={() => setIsFocused(true)}
+      onPressOut={() => setIsFocused(false)}
+      activeOpacity={0.9}>
       <View style={{position: 'relative', marginBottom: 10}}>
         {!imageError ? (
           <Image
@@ -68,7 +75,7 @@ const TransportCard = ({
           <Text style={styles.price}> à partir de : {price} MAD</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 
@@ -78,7 +85,12 @@ const styles = StyleSheet.create({
   card: {
     width: 220,
     marginRight: 20,
-    paddingBottom: 20
+    paddingBottom: 20,
+    borderRadius: 14
+  },
+  cardFocused: {
+    borderWidth: 2,
+    borderColor: 'white'
   },
   image: {
     width: '100%',
